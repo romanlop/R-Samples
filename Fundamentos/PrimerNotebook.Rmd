@@ -1,0 +1,104 @@
+---
+title: "Roman:Mi primer Notebook"
+output: html_notebook
+---
+
+Elementos básicos de R
+El elemento más básico con el que se  trabaja son los vectores. Así un vector, se crea con la letra c!!!
+```{r}
+vector_a<-c(1,4,2,3,2,10)
+#la asignación se hace con <-. Para ver el valor por pantalla basta con poner el nombre de la variable
+vector_a
+
+#A continuación se muestran las operaciones básicas sobre elemenos de un vector.
+vector_a + 50
+vector_a - 50
+vector_a / 3
+vector_a ^ 2
+vector_a %% 2 #modulo
+vector_a %/% 3 #division de enteros
+```
+
+R incorpora las funciones matemáticas clásicas aplicables a sus objetos, que a su vez son operables entre si
+```{r}
+sqrt(vector_a) #raiz cuadrada
+exp(vector_a) #función exponencial. e^x, siendo "e" el número de Euler -> 2,721828. Tiene la particularidad de que su derivada es la misma función
+log(vector_a, base=2) #log. Puede especificarse la base como argumento. El logaritmoes el exponente al cual hay que elevar la base para obtener dicho número.
+log10(vector_a)
+cos(vector_a) #coseno
+
+```
+
+Para obtener información de una función se selecciona y se pulsa **F1** ó escribimos
+```{r}
+help(sqrt)
+```
+
+Generar un vector, identificar el tipo de objeto y averiguar su longitud:
+```{r}
+x<-c(1:10) # crear vector como un rango
+x
+class(x)
+length(x)
+```
+
+Generar vectores con saltos por intervalos, vectores de valores repetidos, vectores con carácteres.
+```{r}
+seq(1,9,by=2)
+seq(1,9,length=6) 
+
+rep(3,10)
+
+x<-c("a","e","i","o","u")
+x
+class(x)
+```
+
+Ordenar vectores
+```{r}
+a <- c(2,4,6,3,1,5)
+b <- sort(a)
+b
+c <- sort(a,decreasing = TRUE)
+c
+```
+
+Booleanos (**Verdadero: TRUE ó T y Falso: FALSE ó F** que indican si se cumple una condición en cada posición de un vector. El símbolo `!` es una negación.
+```{r}
+c(TRUE, FALSE)
+c(F, T)
+!c(F,T) #negación
+c(F,T) == !c(T,F) #está haciendo una comparación
+x<-c(1,-1,2,-2)
+x>0
+```
+
+Subindexación del vector usando una máscara en forma de condición:
+
+```{r}
+x[1]
+x[x>0]
+x[2:3] #los indices comienzan en 1
+x[-(1:2)] #lo contrario a lo especificado
+x[c(T,F)] #coordenadas impares, lo hace pasando un vector booleano como parámetro, con true en el componente impar.
+x[c(F,T)] #coordenadas pares
+```
+
+Reasignación de valores según posición, saber si una posición es un `NaN` (un valor faltante ó desconocido), saber qué posiciones tienen valores faltantes, seleccionar aquellas posiciones que no tienen valor faltante
+
+```{r}
+x[5] <- NaN
+x
+
+is.na(x)
+!is.na(x)
+
+x[!is.na(x)] #elimina del vector los Nan
+which(is.nan(x)) #Give the TRUE indices of a logical object, allowing for array indices
+```
+
+Los vectores se pueden combinar
+```{r}
+
+```
+
