@@ -82,6 +82,7 @@ x[2:3] #los indices comienzan en 1
 x[-(1:2)] #lo contrario a lo especificado
 x[c(T,F)] #coordenadas impares, lo hace pasando un vector booleano como parámetro, con true en el componente impar.
 x[c(F,T)] #coordenadas pares
+x[-2] #devuelve el vector sin el elemento de la segunda posición
 ```
 
 Reasignación de valores según posición, saber si una posición es un `NaN` (un valor faltante ó desconocido), saber qué posiciones tienen valores faltantes, seleccionar aquellas posiciones que no tienen valor faltante
@@ -99,6 +100,25 @@ which(is.nan(x)) #Give the TRUE indices of a logical object, allowing for array 
 
 Los vectores se pueden combinar
 ```{r}
+textos=c("caca","culo","pedo","pis")
+c(a,textos,b) # los pasa a char. In the code snippet above, notice how the numeric values are being coerced into character strings when the two vectors are combined. This is necessary so as to maintain the same primitive data type for members in the same vector.
+class(c(a,textos,b))
+class(c(a,b))
 
+```
+Suma de dos vectores
+```{r}
+u = c(10, 20, 30) 
+v = c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+u+u
+u+v #en este caso, el vector mas pequeño se replica hasta llegar al tamaño del mayor
+```
+
+Named Vectors
+```{r}
+v2 = c("Mary", "Sue") 
+v2
+names(v2) = c("First", "Last") 
+v2["First"]
 ```
 
