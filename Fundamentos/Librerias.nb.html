@@ -176,9 +176,51 @@ $(document).ready(function () {
 
 
 <!-- rnb-text-begin -->
+<p>Listar paquetes instalados</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSgpICNFc3RvcyBzb24gbG9zIHBhcXVldGVzIGluc3RhbGFkb3MuXG5gYGAifQ== -->
+<pre class="r"><code>library() #Estos son los paquetes instalados.</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>all packages available in the library location path lib.loc.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jTGlzdCBhbmQgZGVzY3JpcHRpb24gb2YgYWxsIHBhY2thZ2VzIGluIENSQU4gZnJvbSB3aXRoaW4gUi4gQ1JBTiB2aWVuZSBzaWVuZG8gLT4gQ29tcHJlaGVuc2l2ZSBSIEFyY2hpdmUgTmV0d29yay4gU29uIHVuIGNvbmp1bnRvIGRlIHJlcG9zaXRvcmlvcy5cbmFwIDwtIGF2YWlsYWJsZS5wYWNrYWdlcygpXG5hcFxuYGBgIn0= -->
+<pre class="r"><code>
+#List and description of all packages in CRAN from within R. CRAN viene siendo -&gt; Comprehensive R Archive Network. Son un conjunto de repositorios.
+ap &lt;- available.packages()
+ap</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Instalar un paquete desde internet. CRAN</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5zdGFsbC5wYWNrYWdlcyAoXCJhY3NcIilcbmBgYCJ9 -->
+<pre class="r"><code>install.packages (&quot;acs&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Datos disponibles</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YSgpXG5kYXRhKHBhY2thZ2UgPSAucGFja2FnZXMoYWxsLmF2YWlsYWJsZSA9IFRSVUUpKVxuYGBgIn0= -->
+<pre class="r"><code>data()
+data(package = .packages(all.available = TRUE))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiZGF0YXNldHMgaGF2ZSBiZWVuIG1vdmVkIGZyb20gcGFja2FnZSAnYmFzZScgdG8gcGFja2FnZSAnZGF0YXNldHMnZGF0YXNldHMgaGF2ZSBiZWVuIG1vdmVkIGZyb20gcGFja2FnZSAnc3RhdHMnIHRvIHBhY2thZ2UgJ2RhdGFzZXRzJ1xuIn0= -->
+<pre><code>datasets have been moved from package 'base' to package 'datasets'datasets have been moved from package 'stats' to package 'datasets'</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YShPcmFuZ2UpXG5gYGAifQ== -->
+<pre class="r"><code>data(Orange)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKTGlzdGFyIHBhcXVldGVzIGluc3RhbGFkb3MKYGBge3J9CmxpYnJhcnkoKSAjRXN0b3Mgc29uIGxvcyBwYXF1ZXRlcyBpbnN0YWxhZG9zLgpgYGAKCiBhbGwgcGFja2FnZXMgYXZhaWxhYmxlIGluIHRoZSBsaWJyYXJ5IGxvY2F0aW9uIHBhdGggbGliLmxvYy4KYGBge3J9CgojTGlzdCBhbmQgZGVzY3JpcHRpb24gb2YgYWxsIHBhY2thZ2VzIGluIENSQU4gZnJvbSB3aXRoaW4gUi4gQ1JBTiB2aWVuZSBzaWVuZG8gLT4gQ29tcHJlaGVuc2l2ZSBSIEFyY2hpdmUgTmV0d29yay4gU29uIHVuIGNvbmp1bnRvIGRlIHJlcG9zaXRvcmlvcy4KYXAgPC0gYXZhaWxhYmxlLnBhY2thZ2VzKCkKYXAKYGBgCgpJbnN0YWxhciB1biBwYXF1ZXRlIGRlc2RlIGludGVybmV0LiBDUkFOCmBgYHtyfQppbnN0YWxsLnBhY2thZ2VzICgiYWNzIikKYGBgCgpEYXRvcyBkaXNwb25pYmxlcwoKYGBge3J9CmRhdGEoKQpkYXRhKHBhY2thZ2UgPSAucGFja2FnZXMoYWxsLmF2YWlsYWJsZSA9IFRSVUUpKQpkYXRhKE9yYW5nZSkKYGBgCgo=</div>
 
 
 

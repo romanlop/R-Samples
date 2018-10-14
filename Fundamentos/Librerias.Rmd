@@ -3,3 +3,29 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+Listar paquetes instalados
+```{r}
+library() #Estos son los paquetes instalados.
+```
+
+ all packages available in the library location path lib.loc.
+```{r}
+
+#List and description of all packages in CRAN from within R. CRAN viene siendo -> Comprehensive R Archive Network. Son un conjunto de repositorios.
+ap <- available.packages()
+ap
+```
+
+Instalar un paquete desde internet. CRAN
+```{r}
+install.packages ("acs")
+```
+
+Datos disponibles
+
+```{r}
+data()
+data(package = .packages(all.available = TRUE))
+data(Orange)
+```
+
