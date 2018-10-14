@@ -1,0 +1,31 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+El tipo por defecto es "numeric" independientemente de que asignemos un valor entero
+```{r}
+x=44.5
+y=22
+class(x)
+class(y)
+is.integer(y)
+```
+
+Es necesario forzar la conversión a entero
+```{r}
+y = as.integer(y)
+y
+class(y)
+```
+
+También podemos forzar la conversión de floats o booleanos(logical) a integer
+```{r}
+z = as.integer(x)
+z
+class(y)
+
+as.integer(TRUE) 
+as.integer(FALSE) 
+```
+
