@@ -1,0 +1,166 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Arrays y matrices
+Son matrices que contienen un único tipo de elemento. Admiten las operaciones de álgebra lineal usuales
+
+```{r}
+A = array(1:20)
+A #unidimensional
+A= array(1:20,dim=c(5,6)) # las dimensiones no tienen pq sumar 20. Solo utiliza números de 1 a 20, pero en cualquier cantidad
+A #matriz -> bidimensional
+class(A)
+```
+
+Acceso a elemenos de la matriz
+```{r}
+A[1,5] #fila 1 columna 5
+A[1,] #fila 1 al completo
+A[,3] #columna 3 al completo
+```
+
+Submatrices
+```{r}
+#Filas de las 2 a la 4
+A[2:4,]
+
+#Columnas de la 3 a la 6
+A[,3:6]
+
+#Submatriz
+A[2:4,3:6]
+```
+
+Consultar las dimensiones de una matriz
+```{r}
+nrow(A)
+ncol(A)
+dim(A)
+```
+
+Transposición de una matriz
+```{r}
+t(A) #cambiar filas por columnas
+```
+
+Producto, potencia y seno Posición a Posición
+```{r}
+A*A
+A^2
+sin(A)
+```
+
+Definimos una submatriz a partir de la anterior
+```{r}
+B<- A[1:2,1:2] #definimos una nueva matriz B 
+B
+```
+
+Inversa de una matriz
+
+```{r}
+solve(B)
+#para que tenga inversa, en primer lugar debe ser cuadrada. A parte el cáculo del determinante, si es 0 la matriz no tiene inversa.
+C<-A[1:3,1:3]
+C
+solve(C)
+```
+
+Producto Matricial
+```{r}
+B%*%solve(B) # El producto de una matriz y su inversa tiene que dar este valor siempre.
+
+B%*%B 
+```
+
+
+Otra forma de crear matrices es directamente con la función "Matrix". Los datos que contiene una matriz deben ser todos del mismo tipo: todos numéricos, o de tipo carácter o lógico, pero no mezclados
+```{r}
+A = array(1:100)
+MA<-matrix(A,nrow=20,ncol=5) # en este caso si debemos dar una dimensión que permita incluir los 100 valores, a diferencia de cuando la creamos con array
+MA
+MB<-matrix(A,nrow=20,ncol=5,byrow=T) #cambia el orden en el que se construye la matriz.
+```
+
+Se puende asignar nombres a las filas y columnas de las matrices
+```{r}
+colnames(MA)<-c("edad","peso","altura","caca","culo")
+colnames(MA)
+rownames(MA)<-c(1:20)
+rownames(MA)
+dimnames(MA)
+```
+
+
+```{r}
+mode(MA) #tipo de datos de la matriz.
+length(MA)
+is.matrix(MA) 
+
+
+MA[1,2]
+MA[,"edad"]
+MA[,1]
+MA[2,]
+```
+
+También podemos aplicar funciones sobre los valores de una matriz. Para ello usamos "apply"
+```{r}
+apply(MA,2,mean) #el parametro numérico, 1 indica filas, 2 columnas, array 1,2 indica filas y columnas
+apply(MA,1,mean) #media por filas
+apply(MA,c(1,2),mean) #aplica la función a cada elemento no la media de todos los elementos de la matriz.
+
+mean(MA)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,138 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Tipos de dato
+En el notebook anterior hemos presentado los vectores. Vamos a ver Factores
+Son “vectores” que tienen componentes categóricas. Básicamente un vector de characters.
+
+
+Con este Código podemos limpiar todas las variables.
+```{r}
+closeAllConnections()
+rm(list=ls())
+```
+
+Factores
+Son “vectores” que tienen componentes categóricas. Básicamente un vector de characters
+```{r}
+#provicinas
+prov<-c("lu","co","lu","po","co","or","co","lu","lu","po","co","or","co","co","lu","po")
+prov
+class(prov) #esto es ahora mismo un vector compuesto por carácteres
+```
+
+Lo transformamos en factor, en la transformación se establecen los Levels, que son las distintas categorías contenidas por el factor
+
+```{r}
+provf<-factor(prov) #convertimos en factor
+provf
+class(provf)
+levels(provf) 
+#Devueve los elementos que tienen un valor determinado para la variable categórica. 
+which(provf=="lu")
+```
+
+Modificamos el tipo de los elementos de un factor
+```{r}
+as.character(provf)
+class(provf)
+```
+
+Cargamos la librería plyr y vemos su aplicación
+```{r}
+#plyr Tools for Splitting, Applying and Combining Data. Dividir, combinar y aplicar.
+library(plyr)
+count(provf)
+
+#Permite contar el número de ocurrencias. Se puede indicar el valor a agrupar durante la cuenta.
+
+# Count of each value of "id" in the first 100 cases
+count(baseball[1:100,], vars = "id")
+# Count of ids, weighted by their "g" loading
+count(baseball[1:100,], vars = "id", wt_var = "g")
+count(baseball, "id", "ab")
+count(baseball, "lg")
+```
+
+
+
+
+Factor con variables categóricas numéricas
+```{r}
+q<-factor(c('0.8','1.2','3.3'))
+q
+as.double(levels(q)[q])
+```
+
+También podemos cambiar los valores y etiquetas de todos los elementos del siguiente modo.
+```{r}
+data<-c(1,2,2,3,1,2,3,3,1,2,3,3,1)
+fdata<-factor(data)
+fdata
+
+rdata = factor(data,labels=c("I","II","III"))
+rdata
+which(rdata=="I") #los valores siguen siendo los mismos. Lo que han cambiado son las etiquetas.
+
+```
+
+Vamos a crear un ejemplo utilizando los meses del año.
+```{r}
+months = c("March","April","January","November","January", "September","October","September","November","August","January","November","November","February","May","August","July","December","August","August","September","November", "February","April")
+months = factor(months)
+levels(months) #Notese que los factores no están ordenados
+table(months)
+```
+
+Vamos a crear un ejemplo "ordenado". En factores no ordenados no funcionan los operadores de comparación
+```{r}
+months = factor(months,levels=c("January","February","March","April","May","June","July","August","September","October","November","December"),ordered=TRUE)
+months[3] < months[7]
+table(months)
+months
+```
+
+
+Vamos a convertir un vector numérico en factor. Veremos que la clase pasa de "numeric" a "ordered factor". Sobre este no es posible aplicar directamente ciertas operaciones matemáticas.
+```{r}
+fert = c(10,20,20,50,10,20,10,50,20)
+class(fert) #Numeric
+fert = factor(fert,levels=c(10,20,50),ordered=TRUE)
+class(fert) #Numeric
+mean(fert) # se produce un error.
+mean(as.numeric(levels(fert)[fert])) #lo convertimos y funciona.
+#Indexing the return value from the levels function is the most reliable (confiable) way to convert numeric factors to their original numeric values.
+```
+
+
+Cuando creamos un factor, automáticamente se crean todos los niveles asociados. Si luego queremos por ejemplo pintar los 5 primeros en una tabla, la putada es que se siguen mostrando todos los "level". Para cambiar esto, simplemente tendríamos que crear un nuevo factor
+```{r}
+lets = sample(letters,size=100,replace=TRUE)
+lets = factor(lets)
+lets
+table(lets[1:5])
+table(factor(lets[1:5]))
+```
+
+La función "cut" se utiliza para convertir variables numéricas a factores. El argumento indica el número de rangos a crear.
+```{r}
+#15 observaciones de 2 varibles.
+women$weight
+women$height
+
+#Se pueden incluir además labels a las categorías que creemos
+wfact = cut(women$weight,3,labels=c("low","medium","high")) #usamos para ello un set de datos precargado en R.
+table(wfact)
+
+height = cut(women$height,3,labels=c("low","medium","high")) #usamos para ello un set de datos precargado en R.
+table(height)
+```
+
+Podemos crear un factor con todos los días del año
+```{r}
+everyday = seq(from=as.Date('2005-1-1'),to=as.Date('2005-12-31'),by='day')
+everyday
+```
+
