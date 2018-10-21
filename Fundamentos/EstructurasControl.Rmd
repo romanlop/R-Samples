@@ -93,7 +93,7 @@ Actividad de refuerzo
 —————–
 Escribe una función que tome un vector y cuente el número de elementos positivos
 Escribe una función que dado un número natural calcule su factorial
-Haz un bucle que imprima en qué ciudad se tiene el máximo de cada columna y cuánto vale en el conjunto de datos USArrests (está en data(USArrests))
+
 
 ```{r}
 positivos<-function(x){#toma como valor un vector
@@ -119,11 +119,21 @@ factorial<-function(x){#toma como valor entero
 z<-positivos(c(1,2,5,4,-1,2,3,-5))
 z
 
-fact<-factorial(4)
+fact<-factorial(10)
 fact
 ```
 
+Haz un bucle que imprima en qué ciudad se tiene el máximo de cada columna y cuánto vale en el conjunto de datos USArrests (está en data(USArrests))
+```{r}
+data(USArrests)
+USArrests
+
+for (i in colnames(USArrests)){
+  print(c(i,rownames(USArrests)[which.max(USArrests[,i])]))
+  print(max(USArrests[i]))
+}
 
 
+```
 
 
