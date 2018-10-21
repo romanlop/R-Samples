@@ -1,0 +1,91 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+dplyr aplicaciones
+
+Es una librería centrada en agrupación de datos y selección de los mismos.
+
+Las operaciones centrales que podemos realizar:
+
+    select() seleccionar columnas
+    filter() seleccionar filas
+    group_by() agrupar los datos por una clave, habitualmente una ó varias columnas
+    summarise() sumario ó agregación de los datos agrupados previamente
+    arrange() ordenar los datos
+    mutate() transforma una columna
+    join() ensamblar dataframes
+    
+Veamos con ejemplos lo que puede hacer:
+
+```{r}
+rm(list=ls())
+#install.packages("dplyr") PRIMERO lo instalo, ya que no lo tenía.
+#cargamos el paquete
+library(dplyr)
+data("airquality")
+airquality
+
+```
+
+```{r}
+class(airquality)
+select(airquality,"Ozone","Wind","Month")
+select(airquality,starts_with("W"))
+select(airquality,everything())
+select(airquality, -starts_with("W"))
+```
+
+Filtrar
+```{r}
+filter(airquality, Temp > 70) #filtramos las filas con temperatura superior a 70
+```
+
+```{r}
+filter(airquality, Temp > 80 & Month > 5)
+```
+
+
+```{r}
+mutate(airquality,TempInC = (Temp - 32) * 5 / 9) #añade una nueva columna, add new variables and preserves exisiting
+X<-transmute(airquality,TempInC = (Temp - 32) * 5 / 9) #elimina el resto de variables.
+X
+
+```
+
+```{r}
+summarise(airquality, mean(Temp, na.rm = TRUE)) #calcula la media de la temperatura ignorando valores faltantes
+```
+
+```{r}
+summarise(group_by(airquality, Month), mean(Temp, na.rm = TRUE)) #agrupa por mes y calcula media temperatura
+```
+
+
+```{r}
+count(airquality, Month) #cuenta las apariciones de cada categoría de una columna
+```
+
+```{r}
+arrange(airquality, desc(Month), Day)  #ordena por mes descendente y dia ascendente
+```
+
+Con el operador pipe %>% se pueden hacer las transformaciones anteriores en forma de secuencia, esto es una sintaxis muy cómoda para trabajar sobre las tablas
+
+```{r}
+airquality %>% 
+    filter(Month != 5) %>% 
+    group_by(Month) %>% 
+    summarise(mean(Temp, na.rm = TRUE)) %>%
+    arrange(desc(Month))
+```
+
+```{r}
+airquality %>% 
+    filter(Month != 5) %>% 
+    group_by(Month) %>%
+    mutate(TempInC = (Temp - 32) * 5 / 9) %>% 
+    summarise(mean(TempInC, na.rm = TRUE))
+```
+

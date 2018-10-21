@@ -1,0 +1,129 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+FUNCIONES Y BUCLES
+
+Creamos una función que suma dos valores x e y
+
+"Variables defined inside functions exist in a different environment than the global environment. However, if a variabe is not defined inside a function, it will look one level above."
+```{r}
+sumador<-function(x,y){
+  return(x+y)
+}
+
+sumador(5,4)
+sumador(c(4,5,6),c(5,7,4))
+```
+
+BUCLE FOR
+
+```{r}
+for (i in 1:10){
+  print(i)
+}
+```
+
+```{r}
+x <- c("apples", "oranges", "bananas", "strawberries")
+
+
+for (i in x) {
+    print(x[i])  #devuelve NA
+}
+
+#Estos si funcionan
+for (i in seq(x)) {
+    print(x[i])
+}
+
+for (i in 1:4) {
+    print(x[i])
+}
+
+```
+
+
+WHILE
+```{r}
+i <- 1
+while (i < 10) {
+    print(i)
+    i <- i + 1
+}
+```
+
+REPEAT AND BREAK
+```{r}
+x <- c("apples", "oranges", "bananas", "strawberries")
+i=1
+repeat{
+  print(x[i])
+  if(x[i]=="bananas"){
+    break
+  }
+  i=i+1
+}
+```
+
+NEXT
+```{r}
+x <- c("apples", "oranges", "bananas", "strawberries")
+i=1
+for (i in seq(x)) {
+  if(x[i]=="bananas"){
+    next
+  }
+  print(x[i])
+}
+```
+
+IF, ELSE
+```{r}
+x<-"M"
+if (x=="H"){
+  print("Es hombre")
+}else{
+  print("Es mujer")
+}
+```
+
+Actividad de refuerzo
+—————–
+Escribe una función que tome un vector y cuente el número de elementos positivos
+Escribe una función que dado un número natural calcule su factorial
+Haz un bucle que imprima en qué ciudad se tiene el máximo de cada columna y cuánto vale en el conjunto de datos USArrests (está en data(USArrests))
+
+```{r}
+positivos<-function(x){#toma como valor un vector
+  pos=0
+  for(i in seq(x)){
+    if(x[i]>0){
+      pos=pos+1
+    }
+   }
+   return (pos) 
+}
+
+factorial<-function(x){#toma como valor entero
+  fac=x
+  while(x>1){
+    fac=fac*(x-1)
+    print(fac)
+    x=x-1
+  }
+  return (fac)
+}
+
+z<-positivos(c(1,2,5,4,-1,2,3,-5))
+z
+
+fact<-factorial(4)
+fact
+```
+
+
+
+
+
