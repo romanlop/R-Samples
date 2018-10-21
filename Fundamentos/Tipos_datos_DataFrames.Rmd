@@ -1,0 +1,87 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+DATA FRAMES
+
+Vemos antes de los dataframes operaciones de listado de variables y borrado auxiliares
+```{r}
+a <- c(1,2,3,4,4,5,6,7,5,4)
+b <- c(1:100)
+ls()
+rm("b") #elimina de memoria una variable concreta
+ls()
+rm(list=ls()) #elimina todas las variables.
+```
+
+Data Frames
+```{r}
+#creamos varios vectores correspondientes a las columnas
+
+nombre <- c("Roman","Hugo","Juan")
+peso <- c(75,70,68)
+estatura <- c(174,182,170)
+edad <- c(33,17,44)
+
+M<-data.frame(nombre,edad,estatura,peso)
+```
+
+Podemos ver sus atributos principales
+```{r}
+attributes(M) #Nombre de columnas, tipo de dato y nombre de las filas
+
+colnames(M)
+rownames(M)<-c("muestra 1","muestra 2","muestra 3")
+rownames(M)
+
+nrow(M)
+ncol(M)
+
+dim(M)
+```
+
+HEAD y STR
+```{r}
+head(M) #te lo muestra en formato tabla, pero solo devuelve las primeras filas
+
+str(M) #devuelve un resumen rápido. Indica también los primeros valores
+```
+
+
+ACCESO A VALORES DEL DATA FRAME
+```{r}
+M$estatura #acceso a columnas
+
+M[2,] #acceso a la segunda fila
+
+#selecciona de la primera fila las posiciones de la primera y segunda columna
+M[1,1:2]
+
+M[,-1] #todo el dataframe salvo la última columna
+
+M['estatura'] #otra forma de acceder a una columna
+```
+
+Otras operaciones sobre data frames
+```{r}
+M$estatura <- c(174, 182, 169)
+M
+```
+
+Otras formas de acceder a subonjuntos de datos
+```{r}
+subset(M,edad>20,select = c("nombre","edad"))
+subset(M,edad>20,select = nombre:peso)
+
+subset(M,edad>20 & estatura>170,select = nombre:peso)
+
+M[M$nombre=="Juan" & M$edad>20,]
+```
+
+
+
+
+
+
+
