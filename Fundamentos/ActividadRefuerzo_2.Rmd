@@ -1,0 +1,73 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Actividad refuerzo
+———————-
+Carga el dataset en la url http://archive.ics.uci.edu/ml/machine-learning-databases/autos/imports-85.data indicando que los valores faltantes son “?”
+Haz un sumario del dataframe.
+Qué dimensión tiene el dataframe?
+Inspecciona los datos, de qué clase es cada tipo? Extrae los distintos valores que toman los factores.
+Indica la proporción de valores faltantes por columna usando sum e is.na y un apply (usa nrow).
+Edita la primera columna llevándola al rango 0-5.
+Da una media de los valores de la primera columna respecto a la columna de número de puertas del coche.
+Extrae los coches audi que son cuatro puertas con valor V13 menor que 55
+
+
+
+```{r}
+dat<-read.csv("recursos/csv_actividad2.csv",header = FALSE,sep="," ,na.strings = "?")   
+#con HEADER = FALSE indicamos que la primera fila no se corresponde con los nombres de las columnas
+#sep ="," se puede omitir por ser el valor por defecto
+#con colnames podemos pasar un vector con los nombres de las columnas
+#na.strings te permite indicar qué valores se interpretan como N/A
+class(dat)
+```
+
+Haz un sumario del dataframe.
+Qué dimensión tiene el dataframe?
+```{r}
+summary(dat) #resumen
+dim(dat) #dimensiones
+```
+
+Inspecciona los datos, de qué clase es cada tipo? Extrae los distintos valores que toman los factores.
+```{r}
+tipos<-sapply(dat,class)
+tipos
+
+factores <- sapply(dat,levels)
+factores <- factores[!sapply(factores, is.null)]
+factores
+```
+
+Indica la proporción de valores faltantes por columna usando sum e is.na y un apply (usa nrow).
+```{r}
+
+apply(is.na(dat),2,sum)/nrow(dat)*100
+
+```
+
+Edita la primera columna llevándola al rango 0-5.
+```{r}
+range(dat[,1])
+dat$V1<-dat$V1+3
+dat$V1
+```
+
+Extrae los coches audi que son cuatro puertas con valor V13 menor que 55
+```{r}
+dat
+subset(dat,V13<55 & V3=="audi" & V6=="four",select = c("V1","V2","V3","V4","V5","V6","V7"))
+```
+
+Da una media de los valores de la primera columna respecto a la columna de número de puertas del coche.
+```{r}
+tapply(dat$V1,dat$V6,mean)
+```
+
+
+
+
+

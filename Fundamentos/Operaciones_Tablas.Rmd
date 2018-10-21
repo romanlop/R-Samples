@@ -1,0 +1,115 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Operaciones de descripción y agrupación sobre tablas
+
+Operaciones agregantes
+apply y sapply aplican una función agregante por fila ó columna
+
+
+The Apply family comprises: apply, lapply , sapply, vapply, mapply, rapply, and tapply. The Family of Apply functions pertains to the R base package, and is populated with functions to manipulate slices of data from matrices, arrays, lists and data frames in a repetitive way. 
+
+Apply y el resto de funciones derivadas, están diseñadas para evitar utilizar bucles durante el tratamiento de datos. Actúan tomando como entrada una matriz, una lista o un array y aplican una función.
+
+La función Apply, devuelve un vector, matriz o lista de valores, obtenidos al aplicar una función a una matriz o submatriz.
+```{r}
+A <- array(1:20,dim=c(4,5))
+A
+help(apply) #Returns a vector or array or list of values obtained by applying a function to margins of an array or matrix.
+apply(A,1,sum)  #En el segundo parámetro 1 indica filas, 2 columnas
+x<-apply(A,2,sum)  
+x
+class(x)
+x<-apply(A,2,prod) 
+x
+class(x)
+x<-apply(A,2,max)
+x
+class(x)
+x<-apply(A,2,min)
+x
+class(x)
+apply(A,1,is.vector)
+apply(A,2,is.vector)
+
+
+```
+
+Ejemplos con un set de datos concreto
+```{r}
+data(cars)
+help(cars) #descripción del dataset
+dim(cars)
+str(cars)
+head(cars)
+```
+
+Resumen del dataset
+```{r}
+summary(cars)
+```
+
+Estadísticos de agregación
+```{r}
+apply(cars,2,min)  #valor mínimo para velocidad y distancia
+apply(cars,2,max)  #valor mínimo para velocidad y distancia
+apply(cars,2,mean)  #valor mínimo para velocidad y distancia
+cars
+```
+
+lapply
+You want to apply a given function to every element of a list and obtain a list as result. When you execute ?lapply
+
+The difference is that:
+
+It can be used for other objects like dataframes, lists or vectors; and
+The output returned is a list (which explains the “l” in the function name), which has the same number of elements as the object passed to it.
+
+```{r}
+#lapply returns a list of the same length as X, each element of which is the result of applying FUN to the corresponding element of X.
+lapply(cars,function(cars) cars/2) #lapply devuelve una lista como resultado
+#the above lapply function divides the values in the dataframe by 2 and the
+#output will be in form of list
+
+lista_1<-lapply(cars,mean) #devuelve el resultado en forma de lista
+lista_1$speed
+```
+
+sapply function takes list, vector or Data frame  as input. It is similar to lapply function but returns only vector as output
+```{r}
+sapply(cars,class)
+vector_s<-sapply(cars,function(cars) cars/2) #sapply devuelve un vector como resultado
+vector_s[4:10]
+```
+
+```{r}
+sapply(cars,log) #devuelve un vector como resultado, aplicando la función a cada elemento
+apply (cars,1,log) 
+```
+
+mapply: es una versión multivariable de sapply. mapply aplica FUN a los primeros elementos de cada argumento (...), los segundos elementos, los terceros elementos, etc.
+```{r}
+mapply(sum, 1:4)
+mapply(sum, 1:4,1:4)
+mapply(sum, 1:4,1:4,1:4)
+#mapply sums up all the first elements(1+1+1) ,sums up all the
+#second elements(2+2+2) and so on so the result will be
+
+
+mapply(mean, cars)
+```
+
+
+
+tapply Para cuando desea aplicar una función a los subconjuntos de un vector y los subconjuntos están definidos por algún otro vector, generalmente un factor.
+```{r}
+help(tapply)
+hijos<-c(1,3,2,2,3,5,3,2,1,2,3,1,2,4,1,0)
+prov<-c("lu","co","lu","po","co","or","co","lu","lu","po","co","or","co","co","lu","po")
+provf<-factor(prov)
+tapply(hijos,provf,mean) #hace la media por categorías relacionando las listas hijoas y provf
+
+```
+

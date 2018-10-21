@@ -1,0 +1,22 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Usamos las funciones read.csv y write.csv para cargar y leer .csv. La herramienta de lectura tiene un sistema automático de inferencia de formato que funciona en casi todas las cargas de tablas.
+
+```{r}
+data("USArrests") #carga un dataset del repositorio de R
+USArrests
+```
+
+```{r}
+write.csv(USArrests,"recursos/USArrests.csv",sep = ";") #escribe en .csv con separador ;
+```
+
+```{r}
+dat<-read.csv("recursos/USArrests.csv",row.names="X") #con row.names= se indica cual es la fila que contiene nos nombres de las columnas. En este ejemplo es la fila que comienza con una X.
+dat
+```
+
+
