@@ -1,0 +1,32 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+SERIES TEMPORALES
+Son Vectores que tienen atributos temporales, habitualmente fecha y hora y/o frecuencia.
+
+```{r}
+serie <- ts(1:10, start = 1959) #crea una serie que empieza en 1959, R lo interpreta como anual
+serie
+```
+
+```{r}
+class(serie)
+
+attributes(serie) #atributos
+```
+
+```{r}
+ts(1:47, frequency = 12, start = c(1959, 2)) #crea una serie con frecuencia mensual empezando en el segundo mes
+```
+
+```{r}
+ts(1:10, frequency = 4, start = c(1959, 3)) #frecuencia trimestral empezando en tercer trimestre
+```
+
+```{r}
+ts(matrix(rpois(36, 5), 12, 3), start=c(1961, 1), frequency=12)
+matrix(rpois(36, 5), 12, 3) #distribución de poisson con 12 filas y 3 columnas
+```
+

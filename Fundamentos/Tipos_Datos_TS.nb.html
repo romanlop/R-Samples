@@ -146,7 +146,7 @@ $(document).ready(function () {
 </style>
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("Tipos_Datos_Listas.Rmd");
+  window.initializeSourceEmbed("Tipos_Datos_TS.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
@@ -176,121 +176,112 @@ $(document).ready(function () {
 
 
 <!-- rnb-text-begin -->
-<p>Las listas son “vectores” heterogéneos, esto significa que cada elemento puede ser de un tipo distinto. Tienen nombres de almacenamiento mediante los que se accede los valores.</p>
+<p>SERIES TEMPORALES Son Vectores que tienen atributos temporales, habitualmente fecha y hora y/o frecuencia.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0IDwtIGxpc3QobmFtZT1cIkZyZWRcIiwgd2lmZT1cIk1hcnlcIiwgbm8uY2hpbGRyZW49MywgY2hpbGQuYWdlcz1jKDQsNyw5KSlcbkxzdFxuYGBgIn0= -->
-<pre class="r"><code>Lst &lt;- list(name=&quot;Fred&quot;, wife=&quot;Mary&quot;, no.children=3, child.ages=c(4,7,9))
-Lst</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2VyaWUgPC0gdHMoMToxMCwgc3RhcnQgPSAxOTU5KSAjY3JlYSB1bmEgc2VyaWUgcXVlIGVtcGllemEgZW4gMTk1OSwgUiBsbyBpbnRlcnByZXRhIGNvbW8gYW51YWxcbnNlcmllXG5gYGAifQ== -->
+<pre class="r"><code>serie &lt;- ts(1:10, start = 1959) #crea una serie que empieza en 1959, R lo interpreta como anual
+serie</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJG5hbWVcblsxXSBcIkZyZWRcIlxuXG4kd2lmZVxuWzFdIFwiTWFyeVwiXG5cbiRuby5jaGlsZHJlblxuWzFdIDNcblxuJGNoaWxkLmFnZXNcblsxXSA0IDcgOVxuIn0= -->
-<pre><code>$name
-[1] &quot;Fred&quot;
-
-$wife
-[1] &quot;Mary&quot;
-
-$no.children
-[1] 3
-
-$child.ages
-[1] 4 7 9</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0JG5hbWVcbmBgYCJ9 -->
-<pre class="r"><code>Lst$name</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRnJlZFwiXG4ifQ== -->
-<pre><code>[1] &quot;Fred&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0JHdpZmVcbmBgYCJ9 -->
-<pre class="r"><code>Lst$wife</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTWFyeVwiXG4ifQ== -->
-<pre><code>[1] &quot;Mary&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0JG5vLmNoaWxkcmVuXG5gYGAifQ== -->
-<pre class="r"><code>Lst$no.children</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDNcbiJ9 -->
-<pre><code>[1] 3</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0JGNoaWxkLmFnZXNcbmBgYCJ9 -->
-<pre class="r"><code>Lst$child.ages</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQgNyA5XG4ifQ== -->
-<pre><code>[1] 4 7 9</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGVuZ3RoKExzdCkgI2xvbmdpdHVkXG5gYGAifQ== -->
-<pre class="r"><code>length(Lst) #longitud</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDRcbiJ9 -->
-<pre><code>[1] 4</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXR0cmlidXRlcyhMc3QpICNhdHJpYnV0b3NcbmBgYCJ9 -->
-<pre class="r"><code>attributes(Lst) #atributos</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJG5hbWVzXG5bMV0gXCJuYW1lXCIgICAgICAgIFwid2lmZVwiICAgICAgICBcIm5vLmNoaWxkcmVuXCIgXCJjaGlsZC5hZ2VzXCIgXG4ifQ== -->
-<pre><code>$names
-[1] &quot;name&quot;        &quot;wife&quot;        &quot;no.children&quot; &quot;child.ages&quot; </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmFtZXMoTHN0KSAjY2xhdmVzIHBhcmEgYWNjZWRlciBhIGxvcyBlbGVtZW50b3NcbmBgYCJ9 -->
-<pre class="r"><code>names(Lst) #claves para acceder a los elementos</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwibmFtZVwiICAgICAgICBcIndpZmVcIiAgICAgICAgXCJuby5jaGlsZHJlblwiIFwiY2hpbGQuYWdlc1wiIFxuIn0= -->
-<pre><code>[1] &quot;name&quot;        &quot;wife&quot;        &quot;no.children&quot; &quot;child.ages&quot; </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0W1sxXV0gI3RhbWJpw6luIHNlIHB1ZWRlIGFjY2VkZXIgcG9yIHBvc2ljacOzblxuYGBgIn0= -->
-<pre class="r"><code>Lst[[1]] #también se puede acceder por posición</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRnJlZFwiXG4ifQ== -->
-<pre><code>[1] &quot;Fred&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0W1s0XV1cbmBgYCJ9 -->
-<pre class="r"><code>Lst[[4]]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQgNyA5XG4ifQ== -->
-<pre><code>[1] 4 7 9</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0W1s0XV1bM11cbmBgYCJ9 -->
-<pre class="r"><code>Lst[[4]][3]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDlcbiJ9 -->
-<pre><code>[1] 9</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Se pueden atar los elementos de una lista como variables de entorno para acceder con mayor facilidad mediante el comando attach . En esta operación hay que tener cuidado de que los nombres no coincidan con una variable global, de lo contrario no se dispondrá, en este caso sucede para name</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXR0YWNoKExzdCkgI2F0YW1vcyBsYSB2YXJpYWJsZSBMc3QgZGUgbW9kbyBxdWUgc3VzIGNvbXBvbmVudGVzIHNvbiB2YXJpYWJsZXMgZ2xvYmFsZXNcbmBgYCJ9 -->
-<pre class="r"><code>attach(Lst) #atamos la variable Lst de modo que sus componentes son variables globales</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSBMc3QgKHBvcyA9IDMpOlxuXG4gICAgY2hpbGQuYWdlcywgbmFtZSwgbm8uY2hpbGRyZW4sIHdpZmVcbiJ9 -->
-<pre><code>The following objects are masked from Lst (pos = 3):
-
-    child.ages, name, no.children, wife</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiVGltZSBTZXJpZXM6XG5TdGFydCA9IDE5NTkgXG5FbmQgPSAxOTY4IFxuRnJlcXVlbmN5ID0gMSBcbiBbMV0gIDEgIDIgIDMgIDQgIDUgIDYgIDcgIDggIDkgMTBcbiJ9 -->
+<pre><code>Time Series:
+Start = 1959 
+End = 1968 
+Frequency = 1 
+ [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmFtZVxuYGBgIn0= -->
-<pre class="r"><code>name</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3Moc2VyaWUpXG5gYGAifQ== -->
+<pre class="r"><code>class(serie)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRnJlZFwiXG4ifQ== -->
-<pre><code>[1] &quot;Fred&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwidHNcIlxuIn0= -->
+<pre><code>[1] &quot;ts&quot;</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2lmZVxuYGBgIn0= -->
-<pre class="r"><code>wife</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXR0cmlidXRlcyhzZXJpZSkgI2F0cmlidXRvc1xuYGBgIn0= -->
+<pre class="r"><code>attributes(serie) #atributos</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTWFyeVwiXG4ifQ== -->
-<pre><code>[1] &quot;Mary&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiJHRzcFxuWzFdIDE5NTkgMTk2OCAgICAxXG5cbiRjbGFzc1xuWzFdIFwidHNcIlxuIn0= -->
+<pre><code>$tsp
+[1] 1959 1968    1
+
+$class
+[1] &quot;ts&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHMoMTo0NywgZnJlcXVlbmN5ID0gMTIsIHN0YXJ0ID0gYygxOTU5LCAyKSkgI2NyZWEgdW5hIHNlcmllIGNvbiBmcmVjdWVuY2lhIG1lbnN1YWwgZW1wZXphbmRvIGVuIGVsIHNlZ3VuZG8gbWVzXG5gYGAifQ== -->
+<pre class="r"><code>ts(1:47, frequency = 12, start = c(1959, 2)) #crea una serie con frecuencia mensual empezando en el segundo mes</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICBKYW4gRmViIE1hciBBcHIgTWF5IEp1biBKdWwgQXVnIFNlcCBPY3QgTm92IERlY1xuMTk1OSAgICAgICAxICAgMiAgIDMgICA0ICAgNSAgIDYgICA3ICAgOCAgIDkgIDEwICAxMVxuMTk2MCAgMTIgIDEzICAxNCAgMTUgIDE2ICAxNyAgMTggIDE5ICAyMCAgMjEgIDIyICAyM1xuMTk2MSAgMjQgIDI1ICAyNiAgMjcgIDI4ICAyOSAgMzAgIDMxICAzMiAgMzMgIDM0ICAzNVxuMTk2MiAgMzYgIDM3ICAzOCAgMzkgIDQwICA0MSAgNDIgIDQzICA0NCAgNDUgIDQ2ICA0N1xuIn0= -->
+<pre><code>     Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+1959       1   2   3   4   5   6   7   8   9  10  11
+1960  12  13  14  15  16  17  18  19  20  21  22  23
+1961  24  25  26  27  28  29  30  31  32  33  34  35
+1962  36  37  38  39  40  41  42  43  44  45  46  47</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHMoMToxMCwgZnJlcXVlbmN5ID0gNCwgc3RhcnQgPSBjKDE5NTksIDMpKSAjZnJlY3VlbmNpYSB0cmltZXN0cmFsIGVtcGV6YW5kbyBlbiB0ZXJjZXIgdHJpbWVzdHJlXG5gYGAifQ== -->
+<pre class="r"><code>ts(1:10, frequency = 4, start = c(1959, 3)) #frecuencia trimestral empezando en tercer trimestre</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICBRdHIxIFF0cjIgUXRyMyBRdHI0XG4xOTU5ICAgICAgICAgICAgICAxICAgIDJcbjE5NjAgICAgMyAgICA0ICAgIDUgICAgNlxuMTk2MSAgICA3ICAgIDggICAgOSAgIDEwXG4ifQ== -->
+<pre><code>     Qtr1 Qtr2 Qtr3 Qtr4
+1959              1    2
+1960    3    4    5    6
+1961    7    8    9   10</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHMobWF0cml4KHJwb2lzKDM2LCA1KSwgMTIsIDMpLCBzdGFydD1jKDE5NjEsIDEpLCBmcmVxdWVuY3k9MTIpXG5gYGAifQ== -->
+<pre class="r"><code>ts(matrix(rpois(36, 5), 12, 3), start=c(1961, 1), frequency=12)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgU2VyaWVzIDEgU2VyaWVzIDIgU2VyaWVzIDNcbkphbiAxOTYxICAgICAgICA3ICAgICAgICA1ICAgICAgICAyXG5GZWIgMTk2MSAgICAgICAgMSAgICAgICAgNiAgICAgICAgNlxuTWFyIDE5NjEgICAgICAgIDUgICAgICAgIDUgICAgICAgIDdcbkFwciAxOTYxICAgICAgICAzICAgICAgICA1ICAgICAgICA0XG5NYXkgMTk2MSAgICAgICAgNSAgICAgICAgNyAgICAgICAgOVxuSnVuIDE5NjEgICAgICAgIDYgICAgICAgIDIgICAgICAgIDZcbkp1bCAxOTYxICAgICAgICA0ICAgICAgICA1ICAgICAgICAyXG5BdWcgMTk2MSAgICAgICAgNSAgICAgICAgNiAgICAgICAgNlxuU2VwIDE5NjEgICAgICAgIDMgICAgICAgIDYgICAgICAgMTFcbk9jdCAxOTYxICAgICAgICA3ICAgICAgICA1ICAgICAgICA2XG5Ob3YgMTk2MSAgICAgICAgMyAgICAgICAgNSAgICAgICAgNlxuRGVjIDE5NjEgICAgICAgIDUgICAgICAgIDUgICAgICAgIDNcbiJ9 -->
+<pre><code>         Series 1 Series 2 Series 3
+Jan 1961        7        5        2
+Feb 1961        1        6        6
+Mar 1961        5        5        7
+Apr 1961        3        5        4
+May 1961        5        7        9
+Jun 1961        6        2        6
+Jul 1961        4        5        2
+Aug 1961        5        6        6
+Sep 1961        3        6       11
+Oct 1961        7        5        6
+Nov 1961        3        5        6
+Dec 1961        5        5        3</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWF0cml4KHJwb2lzKDM2LCA1KSwgMTIsIDMpXG5gYGAifQ== -->
+<pre class="r"><code>matrix(rpois(36, 5), 12, 3)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgWywxXSBbLDJdIFssM11cbiBbMSxdICAgIDEgICAgNyAgICAxXG4gWzIsXSAgIDEwICAgIDIgICAgNVxuIFszLF0gICAgMyAgICAyICAgIDVcbiBbNCxdICAgIDQgICAgNCAgICA1XG4gWzUsXSAgICAzICAgIDggICAgNFxuIFs2LF0gICAgNSAgICAyICAgIDZcbiBbNyxdICAgIDcgICAgNSAgICAyXG4gWzgsXSAgICA2ICAgIDQgICAgNlxuIFs5LF0gICAgOCAgICA3ICAgIDlcblsxMCxdICAgIDUgICAgOCAgICA4XG5bMTEsXSAgICAzICAgIDYgICAgNVxuWzEyLF0gICAgNiAgICAzICAgIDZcbiJ9 -->
+<pre><code>      [,1] [,2] [,3]
+ [1,]    1    7    1
+ [2,]   10    2    5
+ [3,]    3    2    5
+ [4,]    4    4    5
+ [5,]    3    8    4
+ [6,]    5    2    6
+ [7,]    7    5    2
+ [8,]    6    4    6
+ [9,]    8    7    9
+[10,]    5    8    8
+[11,]    3    6    5
+[12,]    6    3    6</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKTGFzIGxpc3RhcyBzb24g4oCcdmVjdG9yZXPigJ0gaGV0ZXJvZ8OpbmVvcywgZXN0byBzaWduaWZpY2EgcXVlIGNhZGEgZWxlbWVudG8gcHVlZGUgc2VyIGRlIHVuIHRpcG8gZGlzdGludG8uIFRpZW5lbiBub21icmVzIGRlIGFsbWFjZW5hbWllbnRvIG1lZGlhbnRlIGxvcyBxdWUgc2UgYWNjZWRlIGxvcyB2YWxvcmVzLgoKYGBge3J9CkxzdCA8LSBsaXN0KG5hbWU9IkZyZWQiLCB3aWZlPSJNYXJ5Iiwgbm8uY2hpbGRyZW49MywgY2hpbGQuYWdlcz1jKDQsNyw5KSkKTHN0CgpMc3QkbmFtZQpMc3Qkd2lmZQpMc3Qkbm8uY2hpbGRyZW4KTHN0JGNoaWxkLmFnZXMKCmxlbmd0aChMc3QpICNsb25naXR1ZAphdHRyaWJ1dGVzKExzdCkgI2F0cmlidXRvcwpuYW1lcyhMc3QpICNjbGF2ZXMgcGFyYSBhY2NlZGVyIGEgbG9zIGVsZW1lbnRvcwoKTHN0W1sxXV0gI3RhbWJpw6luIHNlIHB1ZWRlIGFjY2VkZXIgcG9yIHBvc2ljacOzbgpMc3RbWzRdXQpMc3RbWzRdXVszXQpgYGAKClNlIHB1ZWRlbiBhdGFyIGxvcyBlbGVtZW50b3MgZGUgdW5hIGxpc3RhIGNvbW8gdmFyaWFibGVzIGRlIGVudG9ybm8gcGFyYSBhY2NlZGVyIGNvbiBtYXlvciBmYWNpbGlkYWQgbWVkaWFudGUgZWwgY29tYW5kbyBhdHRhY2ggLiBFbiBlc3RhIG9wZXJhY2nDs24gaGF5IHF1ZSB0ZW5lciBjdWlkYWRvIGRlIHF1ZSBsb3Mgbm9tYnJlcyBubyBjb2luY2lkYW4gY29uIHVuYSB2YXJpYWJsZSBnbG9iYWwsIGRlIGxvIGNvbnRyYXJpbyBubyBzZSBkaXNwb25kcsOhLCBlbiBlc3RlIGNhc28gc3VjZWRlIHBhcmEgbmFtZQoKYGBge3J9CmF0dGFjaChMc3QpICNhdGFtb3MgbGEgdmFyaWFibGUgTHN0IGRlIG1vZG8gcXVlIHN1cyBjb21wb25lbnRlcyBzb24gdmFyaWFibGVzIGdsb2JhbGVzCmBgYAoKYGBge3J9Cm5hbWUKCndpZmUKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKU0VSSUVTIFRFTVBPUkFMRVMKU29uIFZlY3RvcmVzIHF1ZSB0aWVuZW4gYXRyaWJ1dG9zIHRlbXBvcmFsZXMsIGhhYml0dWFsbWVudGUgZmVjaGEgeSBob3JhIHkvbyBmcmVjdWVuY2lhLgoKYGBge3J9CnNlcmllIDwtIHRzKDE6MTAsIHN0YXJ0ID0gMTk1OSkgI2NyZWEgdW5hIHNlcmllIHF1ZSBlbXBpZXphIGVuIDE5NTksIFIgbG8gaW50ZXJwcmV0YSBjb21vIGFudWFsCnNlcmllCmBgYAoKYGBge3J9CmNsYXNzKHNlcmllKQoKYXR0cmlidXRlcyhzZXJpZSkgI2F0cmlidXRvcwpgYGAKCmBgYHtyfQp0cygxOjQ3LCBmcmVxdWVuY3kgPSAxMiwgc3RhcnQgPSBjKDE5NTksIDIpKSAjY3JlYSB1bmEgc2VyaWUgY29uIGZyZWN1ZW5jaWEgbWVuc3VhbCBlbXBlemFuZG8gZW4gZWwgc2VndW5kbyBtZXMKYGBgCgpgYGB7cn0KdHMoMToxMCwgZnJlcXVlbmN5ID0gNCwgc3RhcnQgPSBjKDE5NTksIDMpKSAjZnJlY3VlbmNpYSB0cmltZXN0cmFsIGVtcGV6YW5kbyBlbiB0ZXJjZXIgdHJpbWVzdHJlCmBgYAoKYGBge3J9CnRzKG1hdHJpeChycG9pcygzNiwgNSksIDEyLCAzKSwgc3RhcnQ9YygxOTYxLCAxKSwgZnJlcXVlbmN5PTEyKQptYXRyaXgocnBvaXMoMzYsIDUpLCAxMiwgMykgI2Rpc3RyaWJ1Y2nDs24gZGUgcG9pc3NvbiBjb24gMTIgZmlsYXMgeSAzIGNvbHVtbmFzCmBgYAoK</div>
 
 
 

@@ -1,0 +1,58 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Actividad de Refuerzo
+
+Crea un dataframe a partir de los vectores X <- c(1,2,3,1,4,5,2) Y <- c(0,3,2,0,5,9,3)
+
+  -Elimina los duplicados usando una función de R adecuada . Mirar help(unique)
+  -Pon nombre a las filas con nombres “CA”,“SE”,“MA”,“BA”,“VA”
+  -Crea una nueva columna Z que sea la suma de las dos primeras dividida por la primera
+  -Cambia el valor X de la provicincia BA por 2
+  -Selecciona aquellas provincias cuyo valor Y sea menor que 4
+  -Crea un factor que indique si es costera o no la ciudad (C ó I) y añádelo como columna
+  
+```{r}
+X <- c(1,2,3,1,4,5,2) 
+Y <- c(0,3,2,0,5,9,3)
+
+df<-data.frame(X,Y)
+df
+df<-unique(df)
+df
+```
+
+-Pon nombre a las filas con nombres “CA”,“SE”,“MA”,“BA”,“VA”
+```{r}
+row.names(df)<-c("CA","SE","MA","BA","VA")
+df
+```
+
+-Crea una nueva columna Z que sea la suma de las dos primeras dividida por la primera
+```{r}
+df$Z=(df[,"X"]+df[,"Y"])/df[,"X"]
+df
+
+```
+
+Cambia el valor X de la provicincia BA por 2
+```{r}
+df["BA","X"]=2
+df
+```
+
+Selecciona aquellas provincias cuyo valor Y sea menor que 4
+```{r}
+subset(df,Y<4,select=c("X","Y","Z"))
+```
+
+Crea un factor que indique si es costera o no la ciudad (C ó I) y añádelo como columna
+
+```{r}
+costa<-factor(c("interior","interior","interior","costera","costera"))
+df$tipo=costa
+df
+```
+

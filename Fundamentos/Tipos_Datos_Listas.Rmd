@@ -3,5 +3,35 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+Las listas son “vectores” heterogéneos, esto significa que cada elemento puede ser de un tipo distinto. Tienen nombres de almacenamiento mediante los que se accede los valores.
 
+```{r}
+Lst <- list(name="Fred", wife="Mary", no.children=3, child.ages=c(4,7,9))
+Lst
+
+Lst$name
+Lst$wife
+Lst$no.children
+Lst$child.ages
+
+length(Lst) #longitud
+attributes(Lst) #atributos
+names(Lst) #claves para acceder a los elementos
+
+Lst[[1]] #también se puede acceder por posición
+Lst[[4]]
+Lst[[4]][3]
+```
+
+Se pueden atar los elementos de una lista como variables de entorno para acceder con mayor facilidad mediante el comando attach . En esta operación hay que tener cuidado de que los nombres no coincidan con una variable global, de lo contrario no se dispondrá, en este caso sucede para name
+
+```{r}
+attach(Lst) #atamos la variable Lst de modo que sus componentes son variables globales
+```
+
+```{r}
+name
+
+wife
+```
 

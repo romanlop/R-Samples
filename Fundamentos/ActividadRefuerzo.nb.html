@@ -146,7 +146,7 @@ $(document).ready(function () {
 </style>
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("Tipos_Datos_Listas.Rmd");
+  window.initializeSourceEmbed("ActividadRefuerzo.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
@@ -176,121 +176,120 @@ $(document).ready(function () {
 
 
 <!-- rnb-text-begin -->
-<p>Las listas son “vectores” heterogéneos, esto significa que cada elemento puede ser de un tipo distinto. Tienen nombres de almacenamiento mediante los que se accede los valores.</p>
+<p>Actividad de Refuerzo</p>
+<p>Crea un dataframe a partir de los vectores X &lt;- c(1,2,3,1,4,5,2) Y &lt;- c(0,3,2,0,5,9,3)</p>
+<p>-Elimina los duplicados usando una función de R adecuada . Mirar help(unique) -Pon nombre a las filas con nombres “CA”,“SE”,“MA”,“BA”,“VA” -Crea una nueva columna Z que sea la suma de las dos primeras dividida por la primera -Cambia el valor X de la provicincia BA por 2 -Selecciona aquellas provincias cuyo valor Y sea menor que 4 -Crea un factor que indique si es costera o no la ciudad (C ó I) y añádelo como columna</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0IDwtIGxpc3QobmFtZT1cIkZyZWRcIiwgd2lmZT1cIk1hcnlcIiwgbm8uY2hpbGRyZW49MywgY2hpbGQuYWdlcz1jKDQsNyw5KSlcbkxzdFxuYGBgIn0= -->
-<pre class="r"><code>Lst &lt;- list(name=&quot;Fred&quot;, wife=&quot;Mary&quot;, no.children=3, child.ages=c(4,7,9))
-Lst</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuWCA8LSBjKDEsMiwzLDEsNCw1LDIpIFxuWSA8LSBjKDAsMywyLDAsNSw5LDMpXG5kZjwtZGF0YS5mcmFtZShYLFkpXG5kZlxuYGBgIn0= -->
+<pre class="r"><code>X &lt;- c(1,2,3,1,4,5,2) 
+Y &lt;- c(0,3,2,0,5,9,3)
+df&lt;-data.frame(X,Y)
+df</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJG5hbWVcblsxXSBcIkZyZWRcIlxuXG4kd2lmZVxuWzFdIFwiTWFyeVwiXG5cbiRuby5jaGlsZHJlblxuWzFdIDNcblxuJGNoaWxkLmFnZXNcblsxXSA0IDcgOVxuIn0= -->
-<pre><code>$name
-[1] &quot;Fred&quot;
-
-$wife
-[1] &quot;Mary&quot;
-
-$no.children
-[1] 3
-
-$child.ages
-[1] 4 7 9</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0JG5hbWVcbmBgYCJ9 -->
-<pre class="r"><code>Lst$name</code></pre>
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibmNvbCI6MiwibnJvdyI6N30sInJkZiI6Ikg0c0lBQUFBQUFBQUExMVFRUTZDTUJCY2lvaVNvQ2I2QXU5eThBTjY4QVdlOEZnUmxZaXRnUm85K21SZmdHNUwxMGlidExzNzNabk9kcnRKbDFFYUFRQURQL0NBK1pqMkdCNGU5R0NvNHhQQW41b0dnQkh1Y1BVR3M5Wmc0NkNOUDN4aTQ2emJSM3dxaVBkMzMrWE51MzJPc1VEd2ExNWpNakhtck51VWtwM1RQcXprSXlGS3JDbXZWalIwZGJPUzE2UkxZSFRnaWlmSEN2bFlOUTRsbERkVlNJRWtwbjhxY01oZTVRRGp1OUJPRG92c2ZCZVh4VkkvWUs3YkZkczgvTXRaK3lUN1dLbkFTdlZ6Y1NwRVR0NUx2czlMVzR4d1lqTndjcXNLb1dnU1JPdEVTY1dwTDhwa1NZaVpEWm92WDZlb1NoY0NBQUE9In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["X"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Y"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0"},{"1":"2","2":"3"},{"1":"3","2":"2"},{"1":"1","2":"0"},{"1":"4","2":"5"},{"1":"5","2":"9"},{"1":"2","2":"3"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[7]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGY8LXVuaXF1ZShkZilcbmRmXG5gYGAifQ== -->
+<pre class="r"><code>df&lt;-unique(df)
+df</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRnJlZFwiXG4ifQ== -->
-<pre><code>[1] &quot;Fred&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0JHdpZmVcbmBgYCJ9 -->
-<pre class="r"><code>Lst$wife</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTWFyeVwiXG4ifQ== -->
-<pre><code>[1] &quot;Mary&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0JG5vLmNoaWxkcmVuXG5gYGAifQ== -->
-<pre class="r"><code>Lst$no.children</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDNcbiJ9 -->
-<pre><code>[1] 3</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0JGNoaWxkLmFnZXNcbmBgYCJ9 -->
-<pre class="r"><code>Lst$child.ages</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQgNyA5XG4ifQ== -->
-<pre><code>[1] 4 7 9</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGVuZ3RoKExzdCkgI2xvbmdpdHVkXG5gYGAifQ== -->
-<pre class="r"><code>length(Lst) #longitud</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDRcbiJ9 -->
-<pre><code>[1] 4</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXR0cmlidXRlcyhMc3QpICNhdHJpYnV0b3NcbmBgYCJ9 -->
-<pre class="r"><code>attributes(Lst) #atributos</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJG5hbWVzXG5bMV0gXCJuYW1lXCIgICAgICAgIFwid2lmZVwiICAgICAgICBcIm5vLmNoaWxkcmVuXCIgXCJjaGlsZC5hZ2VzXCIgXG4ifQ== -->
-<pre><code>$names
-[1] &quot;name&quot;        &quot;wife&quot;        &quot;no.children&quot; &quot;child.ages&quot; </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmFtZXMoTHN0KSAjY2xhdmVzIHBhcmEgYWNjZWRlciBhIGxvcyBlbGVtZW50b3NcbmBgYCJ9 -->
-<pre class="r"><code>names(Lst) #claves para acceder a los elementos</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwibmFtZVwiICAgICAgICBcIndpZmVcIiAgICAgICAgXCJuby5jaGlsZHJlblwiIFwiY2hpbGQuYWdlc1wiIFxuIn0= -->
-<pre><code>[1] &quot;name&quot;        &quot;wife&quot;        &quot;no.children&quot; &quot;child.ages&quot; </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0W1sxXV0gI3RhbWJpw6luIHNlIHB1ZWRlIGFjY2VkZXIgcG9yIHBvc2ljacOzblxuYGBgIn0= -->
-<pre class="r"><code>Lst[[1]] #también se puede acceder por posición</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRnJlZFwiXG4ifQ== -->
-<pre><code>[1] &quot;Fred&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0W1s0XV1cbmBgYCJ9 -->
-<pre class="r"><code>Lst[[4]]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQgNyA5XG4ifQ== -->
-<pre><code>[1] 4 7 9</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTHN0W1s0XV1bM11cbmBgYCJ9 -->
-<pre class="r"><code>Lst[[4]][3]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDlcbiJ9 -->
-<pre><code>[1] 9</code></pre>
-<!-- rnb-output-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibmNvbCI6MiwibnJvdyI6NX0sInJkZiI6Ikg0c0lBQUFBQUFBQUExMVB5MjdDTUJBY093UktKQjRTZkFGM2N1QUh5b0V2NkNrOW1wQ1dpR0NqeEtqOWJMNkFkbVB0Q3ZCSzlqNDBPelA3c1NzMldaRUIwRWhTQloxUU9kRDBLUXd3N3ZNdmtDd0NBSmpTUzk5dkNMRUY1emZPYzg1TFNBUThZaHhlY2R1VklGNkVVMnZPVlVmRlBJaXptMEtLendnK2J0MVBMaXNUMWxYc08rRitHR3VVamVsRVE0Ylp3WGlUZjdYRVJkMDlXaG01aTYrZHBTVzlZTmJuWmRWR2c5blY5cTRPNi9KNHRhZjFwaGRnWjRxZEt1YVpQQnoza3ZxUHFWS21HbGIydTdhVmVHL012bXE0bWRMMTRmajgwdGJXeXlVMDdYTHZ2QkZjVnJwR0p1RTIzUDhCTVRFQTBRTUNBQUE9In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["X"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Y"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0","_rn_":"1"},{"1":"2","2":"3","_rn_":"2"},{"1":"3","2":"2","_rn_":"3"},{"1":"4","2":"5","_rn_":"5"},{"1":"5","2":"9","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Se pueden atar los elementos de una lista como variables de entorno para acceder con mayor facilidad mediante el comando attach . En esta operación hay que tener cuidado de que los nombres no coincidan con una variable global, de lo contrario no se dispondrá, en este caso sucede para name</p>
+<p>-Pon nombre a las filas con nombres “CA”,“SE”,“MA”,“BA”,“VA”</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXR0YWNoKExzdCkgI2F0YW1vcyBsYSB2YXJpYWJsZSBMc3QgZGUgbW9kbyBxdWUgc3VzIGNvbXBvbmVudGVzIHNvbiB2YXJpYWJsZXMgZ2xvYmFsZXNcbmBgYCJ9 -->
-<pre class="r"><code>attach(Lst) #atamos la variable Lst de modo que sus componentes son variables globales</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm93Lm5hbWVzKGRmKTwtYyhcIkNBXCIsXCJTRVwiLFwiTUFcIixcIkJBXCIsXCJWQVwiKVxuZGZcbmBgYCJ9 -->
+<pre class="r"><code>row.names(df)&lt;-c(&quot;CA&quot;,&quot;SE&quot;,&quot;MA&quot;,&quot;BA&quot;,&quot;VA&quot;)
+df</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSBMc3QgKHBvcyA9IDMpOlxuXG4gICAgY2hpbGQuYWdlcywgbmFtZSwgbm8uY2hpbGRyZW4sIHdpZmVcbiJ9 -->
-<pre><code>The following objects are masked from Lst (pos = 3):
-
-    child.ages, name, no.children, wife</code></pre>
-<!-- rnb-output-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibmNvbCI6MiwibnJvdyI6NX0sInJkZiI6Ikg0c0lBQUFBQUFBQUExMVEwVTdDTUJROTY2akFFcEVFdjRCMzltQjhGMFFmZmRIRXpNY3lwaTdPbG13bDhObDhBWHBYZXNsb2srNmNucDY3YzI5Zm43SzdKRXNBQ01ReWdvaUo5Z1I5SXZRd2JIRVB4Qk5uQUVhMDVjTUJiczNoY2VCeDdQRVd2Sndmb1ErWHZ2bVVIUmZCVXF2Zm9pRXlkdUcrbTR6SlIyQWYxbWFYZGt1a3Z4RExCYk8zWjJZdlorM3h6TjRYWVFkNXBScitIWXZKV2xtVmZ0YVVSS2RqVU5JM0cxc2FUVVZpNG1mdkZrZDFJTnhzZGR2emVwWi9iL1hQN0w0TmNOZW5mZTFSZHJnNFJZcS9ZTTZyUW4rVnV1RGVLN1VxS244WTBkdTRwMGszZGFrdFQwSnFrMXBqRmZ1UzNGU3N1Tmx3L0FmUFBxK0RJUUlBQUE9PSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["X"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Y"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0","_rn_":"CA"},{"1":"2","2":"3","_rn_":"SE"},{"1":"3","2":"2","_rn_":"MA"},{"1":"4","2":"5","_rn_":"BA"},{"1":"5","2":"9","_rn_":"VA"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>-Crea una nueva columna Z que sea la suma de las dos primeras dividida por la primera</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmFtZVxuYGBgIn0= -->
-<pre class="r"><code>name</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGYkWj0oZGZbLFwiWFwiXStkZlssXCJZXCJdKS9kZlssXCJYXCJdXG5kZlxuYGBgIn0= -->
+<pre class="r"><code>df$Z=(df[,&quot;X&quot;]+df[,&quot;Y&quot;])/df[,&quot;X&quot;]
+df</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRnJlZFwiXG4ifQ== -->
-<pre><code>[1] &quot;Fred&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2lmZVxuYGBgIn0= -->
-<pre class="r"><code>wife</code></pre>
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6NX0sInJkZiI6Ikg0c0lBQUFBQUFBQUExMVFTMDdETUJDZE9IRkxJMUZGS2lkZzMwamxBazM1TE5tQVZBVjJicHBDUkxDcnhCV2NDUzdIbWtWaDdIaWkxQ1BaNy9uTmpPZnpjSnRmeFhrTUFBeENIZ0FMa1VZTXJ3QWltQmo4QkFoblNJeG5pb2N2ZjhCYUJnN1BIQ1lPTDRETXhvTWZCNmR4MmVWcGZQOS8xT0h5OTh2WWQ4YWNQdHBaOHhybFVyeVhMWkxFTnV1Nno0azhFWG4yOGlhTitraUh1ZHc1Mk0ySzJPTWRzZnRldSs3WmV1VzNVdFNpcGU5SWpMZENpM1RYWUNWOEhiMlVzZHJyU2tsTVlqTzN0R0Z5MEhoQ2NwQ201KzI4ZUQzSXQvbGlZU3BZZjNmT0hmSUJEN3VhN004YmRGVEtsMHFXMUh3dE5tWHRIbE5janQxTnVtOHFxV2tVVk50VUt5MG9MaTVVVFlvZERvNy8zUW1ldjFzQ0FBQT0ifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["X"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Y"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Z"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0","3":"1.000000","_rn_":"CA"},{"1":"2","2":"3","3":"2.500000","_rn_":"SE"},{"1":"3","2":"2","3":"1.666667","_rn_":"MA"},{"1":"4","2":"5","3":"2.250000","_rn_":"BA"},{"1":"5","2":"9","3":"2.800000","_rn_":"VA"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Cambia el valor X de la provicincia BA por 2</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZbXCJCQVwiLFwiWFwiXT0yXG5kZlxuYGBgIn0= -->
+<pre class="r"><code>df[&quot;BA&quot;,&quot;X&quot;]=2
+df</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTWFyeVwiXG4ifQ== -->
-<pre><code>[1] &quot;Mary&quot;</code></pre>
-<!-- rnb-output-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6NX0sInJkZiI6Ikg0c0lBQUFBQUFBQUE0VlFUVS9ETUF4MTAyWnNsWmdtalYvQWZaV0d4SGtkSDBjdVRFS0ZXK2k2VVZHU3FjMEV2d24rSEdjT1kwNGFWeVVYTENWK2ZyYmo1OXpmWkJkeEZnTUFnNUFId0VLRUVjTXJnQWhHeG44QWhGTUVKalBHd3hmZllDMEY1NGRlZkFaa3RoNytxVXZQLzlaMzcwZXRYL3g4R3Z0S21lTUhHMnVlVUM3Rlc5RWdtRml4VG4xRzRKSEFrOWMzcXRWNzB1L2xMc0d1bDRSV3Q0VHVPdTZxUXc5TFgwcGVpWWFlSXpKZUN5MlNUWTJUTURwNExTZHFwMHNsc1lsTjNhZjFtNFBhSXlaN2FUU3ZaL25MWHI3TzVwZG1nczIzNTlSNTNzTmhPNVA5ZW9zT0Nya3RaVUhpSy9GY1ZDNFk0K2ZZdjBsMmRTazFyWUpzazJpbEJkWEZ1YXFJc2N2QjRRZ3VzY3p0V3dJQUFBPT0ifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["X"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Y"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Z"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0","3":"1.000000","_rn_":"CA"},{"1":"2","2":"3","3":"2.500000","_rn_":"SE"},{"1":"3","2":"2","3":"1.666667","_rn_":"MA"},{"1":"2","2":"5","3":"2.250000","_rn_":"BA"},{"1":"5","2":"9","3":"2.800000","_rn_":"VA"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Selecciona aquellas provincias cuyo valor Y sea menor que 4</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3Vic2V0KGRmLFk8NCxzZWxlY3Q9YyhcIlhcIixcIllcIixcIlpcIikpXG5gYGAifQ== -->
+<pre class="r"><code>subset(df,Y&lt;4,select=c(&quot;X&quot;,&quot;Y&quot;,&quot;Z&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6M30sInJkZiI6Ikg0c0lBQUFBQUFBQUEyMVF3VzdDTUF4MTB4YldTcXVRK0k1V1lqZE9GRzA3Y29GTHh5MlVibFRyRXRRR2JkKzAvUnhuRGpBbnhFaU5zTlMrbCtjODIvSHlwWGlLaXhnQUdQaWhCOHhIR2pEOGVSQkFwUEVId0I4ajBabEU0K3dJSm5LdytBQVVpYjNYMDNQbzUyLys0SXF6MDYrT1A2ZHhLUGhYMVNFWm1hSjJtb0xJRzVHMTQ0dGErWjNkODdMbk9iSFZLN0hGM0cxYk5yd2pLNG54bGl1ZXZiZFlGVTlueHpLVWUxVkxnU2FtRnhVNlpxOTFoTkZCNlBtMmFiazdpTTkwTXRVZFRQNzZQVnIwKzF6M1pCZGJLN1MxQnBYNHFFVkZ3emQ4VXpYMmtPQWl6QjZ5ZlZzTFJVOUJ0Y3VVVkp6dXhhVnNTREdQZy9NL1g2SUQ1QmNDQUFBPSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["X"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Y"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Z"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0","3":"1.000000","_rn_":"CA"},{"1":"2","2":"3","3":"2.500000","_rn_":"SE"},{"1":"3","2":"2","3":"1.666667","_rn_":"MA"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Crea un factor que indique si es costera o no la ciudad (C ó I) y añádelo como columna</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29zdGE8LWZhY3RvcihjKFwiaW50ZXJpb3JcIixcImludGVyaW9yXCIsXCJpbnRlcmlvclwiLFwiY29zdGVyYVwiLFwiY29zdGVyYVwiKSlcbmRmJHRpcG89Y29zdGFcbmRmXG5gYGAifQ== -->
+<pre class="r"><code>costa&lt;-factor(c(&quot;interior&quot;,&quot;interior&quot;,&quot;interior&quot;,&quot;costera&quot;,&quot;costera&quot;))
+df$tipo=costa
+df</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibmNvbCI6NCwibnJvdyI6NX0sInJkZiI6Ikg0c0lBQUFBQUFBQUE0VlJ6VTdETUF4MjA3VGJLbTBnalNmZ3ZrcndBdXY0T1hJQkNSVnVvVXVob2lSVm1nSFBCQy9IbWNOR21zYWxxNUN3NVByejF5K083VnhmcEtkUkdnRUFBVC93Z1BnR1VtSStIbENZTlBFZHdKODNyUEdaOFdENUJkWVNjSEU4eUk4QXplcmhIMTF5dksvdjZ0TTJMcjgvR3Z0TWlPUEQzSnJwYStycWs1NTdyZThORVpiOGxaZTFRWWRXMWJLalROYWFLK2JTY1NGTVZrZzFPQnhrSmF2eGJGY3haNWx1cExBZHlnVjc0U2ludU1VVXdSMkNld2VvTGlvNXFERlI4aTN1MXduY0QzSytRblJ6aWVpcTQ4NDZkTHRxUy9xN1FlUFJtbWtXNThvVS82UDVrYXgwSVlXNWxzemRidnVIUFRVZ0RqYWlhWE85eUo0MjRubHgwbHp3K3dZd2RUSG9ZZHBlU2JFeEhDM2s0ckVRSExkWXNnZGV1bVJtMW1HM0VWZktQQkpPWXRnNjFsSXoxRVdaTEpHeHM4SDJCdzFQbWtqaEFnQUEifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["X"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Y"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Z"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["tipo"],"name":[4],"type":["fctr"],"align":["left"]}],"data":[{"1":"1","2":"0","3":"1.000000","4":"interior","_rn_":"CA"},{"1":"2","2":"3","3":"2.500000","4":"interior","_rn_":"SE"},{"1":"3","2":"2","3":"1.666667","4":"interior","_rn_":"MA"},{"1":"2","2":"5","3":"2.250000","4":"costera","_rn_":"BA"},{"1":"5","2":"9","3":"2.800000","4":"costera","_rn_":"VA"}],"options":{"columns":{"min":{},"max":[10],"total":[4]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKTGFzIGxpc3RhcyBzb24g4oCcdmVjdG9yZXPigJ0gaGV0ZXJvZ8OpbmVvcywgZXN0byBzaWduaWZpY2EgcXVlIGNhZGEgZWxlbWVudG8gcHVlZGUgc2VyIGRlIHVuIHRpcG8gZGlzdGludG8uIFRpZW5lbiBub21icmVzIGRlIGFsbWFjZW5hbWllbnRvIG1lZGlhbnRlIGxvcyBxdWUgc2UgYWNjZWRlIGxvcyB2YWxvcmVzLgoKYGBge3J9CkxzdCA8LSBsaXN0KG5hbWU9IkZyZWQiLCB3aWZlPSJNYXJ5Iiwgbm8uY2hpbGRyZW49MywgY2hpbGQuYWdlcz1jKDQsNyw5KSkKTHN0CgpMc3QkbmFtZQpMc3Qkd2lmZQpMc3Qkbm8uY2hpbGRyZW4KTHN0JGNoaWxkLmFnZXMKCmxlbmd0aChMc3QpICNsb25naXR1ZAphdHRyaWJ1dGVzKExzdCkgI2F0cmlidXRvcwpuYW1lcyhMc3QpICNjbGF2ZXMgcGFyYSBhY2NlZGVyIGEgbG9zIGVsZW1lbnRvcwoKTHN0W1sxXV0gI3RhbWJpw6luIHNlIHB1ZWRlIGFjY2VkZXIgcG9yIHBvc2ljacOzbgpMc3RbWzRdXQpMc3RbWzRdXVszXQpgYGAKClNlIHB1ZWRlbiBhdGFyIGxvcyBlbGVtZW50b3MgZGUgdW5hIGxpc3RhIGNvbW8gdmFyaWFibGVzIGRlIGVudG9ybm8gcGFyYSBhY2NlZGVyIGNvbiBtYXlvciBmYWNpbGlkYWQgbWVkaWFudGUgZWwgY29tYW5kbyBhdHRhY2ggLiBFbiBlc3RhIG9wZXJhY2nDs24gaGF5IHF1ZSB0ZW5lciBjdWlkYWRvIGRlIHF1ZSBsb3Mgbm9tYnJlcyBubyBjb2luY2lkYW4gY29uIHVuYSB2YXJpYWJsZSBnbG9iYWwsIGRlIGxvIGNvbnRyYXJpbyBubyBzZSBkaXNwb25kcsOhLCBlbiBlc3RlIGNhc28gc3VjZWRlIHBhcmEgbmFtZQoKYGBge3J9CmF0dGFjaChMc3QpICNhdGFtb3MgbGEgdmFyaWFibGUgTHN0IGRlIG1vZG8gcXVlIHN1cyBjb21wb25lbnRlcyBzb24gdmFyaWFibGVzIGdsb2JhbGVzCmBgYAoKYGBge3J9Cm5hbWUKCndpZmUKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKQWN0aXZpZGFkIGRlIFJlZnVlcnpvCgpDcmVhIHVuIGRhdGFmcmFtZSBhIHBhcnRpciBkZSBsb3MgdmVjdG9yZXMgWCA8LSBjKDEsMiwzLDEsNCw1LDIpIFkgPC0gYygwLDMsMiwwLDUsOSwzKQoKICAtRWxpbWluYSBsb3MgZHVwbGljYWRvcyB1c2FuZG8gdW5hIGZ1bmNpw7NuIGRlIFIgYWRlY3VhZGEgLiBNaXJhciBoZWxwKHVuaXF1ZSkKICAtUG9uIG5vbWJyZSBhIGxhcyBmaWxhcyBjb24gbm9tYnJlcyDigJxDQeKAnSzigJxTReKAnSzigJxNQeKAnSzigJxCQeKAnSzigJxWQeKAnQogIC1DcmVhIHVuYSBudWV2YSBjb2x1bW5hIFogcXVlIHNlYSBsYSBzdW1hIGRlIGxhcyBkb3MgcHJpbWVyYXMgZGl2aWRpZGEgcG9yIGxhIHByaW1lcmEKICAtQ2FtYmlhIGVsIHZhbG9yIFggZGUgbGEgcHJvdmljaW5jaWEgQkEgcG9yIDIKICAtU2VsZWNjaW9uYSBhcXVlbGxhcyBwcm92aW5jaWFzIGN1eW8gdmFsb3IgWSBzZWEgbWVub3IgcXVlIDQKICAtQ3JlYSB1biBmYWN0b3IgcXVlIGluZGlxdWUgc2kgZXMgY29zdGVyYSBvIG5vIGxhIGNpdWRhZCAoQyDDsyBJKSB5IGHDscOhZGVsbyBjb21vIGNvbHVtbmEKICAKYGBge3J9ClggPC0gYygxLDIsMywxLDQsNSwyKSAKWSA8LSBjKDAsMywyLDAsNSw5LDMpCgpkZjwtZGF0YS5mcmFtZShYLFkpCmRmCmRmPC11bmlxdWUoZGYpCmRmCmBgYAoKLVBvbiBub21icmUgYSBsYXMgZmlsYXMgY29uIG5vbWJyZXMg4oCcQ0HigJ0s4oCcU0XigJ0s4oCcTUHigJ0s4oCcQkHigJ0s4oCcVkHigJ0KYGBge3J9CnJvdy5uYW1lcyhkZik8LWMoIkNBIiwiU0UiLCJNQSIsIkJBIiwiVkEiKQpkZgpgYGAKCi1DcmVhIHVuYSBudWV2YSBjb2x1bW5hIFogcXVlIHNlYSBsYSBzdW1hIGRlIGxhcyBkb3MgcHJpbWVyYXMgZGl2aWRpZGEgcG9yIGxhIHByaW1lcmEKYGBge3J9CmRmJFo9KGRmWywiWCJdK2RmWywiWSJdKS9kZlssIlgiXQpkZgoKYGBgCgpDYW1iaWEgZWwgdmFsb3IgWCBkZSBsYSBwcm92aWNpbmNpYSBCQSBwb3IgMgpgYGB7cn0KZGZbIkJBIiwiWCJdPTIKZGYKYGBgCgpTZWxlY2Npb25hIGFxdWVsbGFzIHByb3ZpbmNpYXMgY3V5byB2YWxvciBZIHNlYSBtZW5vciBxdWUgNApgYGB7cn0Kc3Vic2V0KGRmLFk8NCxzZWxlY3Q9YygiWCIsIlkiLCJaIikpCmBgYAoKQ3JlYSB1biBmYWN0b3IgcXVlIGluZGlxdWUgc2kgZXMgY29zdGVyYSBvIG5vIGxhIGNpdWRhZCAoQyDDsyBJKSB5IGHDscOhZGVsbyBjb21vIGNvbHVtbmEKCmBgYHtyfQpjb3N0YTwtZmFjdG9yKGMoImludGVyaW9yIiwiaW50ZXJpb3IiLCJpbnRlcmlvciIsImNvc3RlcmEiLCJjb3N0ZXJhIikpCmRmJHRpcG89Y29zdGEKZGYKYGBgCgo=</div>
 
 
 
