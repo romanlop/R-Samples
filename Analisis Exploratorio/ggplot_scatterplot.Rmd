@@ -1,0 +1,103 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Tipos de gráficas básicas y variantes en ggplot
+Scatterplots (Gráficas de Difusión)
+
+```{r}
+data(cars)
+help(cars)
+head(cars)
+```
+
+```{r}
+plot(cars) #funcion geérica en R. 
+```
+
+Cargamos la librería ggplot para ver cómo mejora los dibujos básicos que tiene integrados R. Hay que instalarla antes de cargarla con el comando comentado
+
+```{r}
+#install.packages("ggplot2")
+library("ggplot2")
+
+
+```
+
+Algunos conceptos clave: http://ggplot.yhathq.com/how-it-works.html
+  Mejor almacenar los datos en DATAFrames.
+  
+```{r}
+data("diamonds")
+head(diamonds)
+help(diamonds)
+```
+
+ggplot lets you combine or add different types of visualization components (or layers) together. I think this is easiest to understand with an example.
+
+Empezamos con un Canvas vacío
+```{r}
+
+diamantes<-data.frame(diamonds[,"price"],diamonds[,"carat"])
+p = ggplot(diamantes,aes(x=price, y=carat))
+p
+```
+  
+Empezamos a incluir cosas: 
+
+```{r}
+p + geom_point(shape=1,position = 'jitter')
+
+#Podemos ver que el precio crece al aumentar el peso del diamante. 
+```
+
+Podemos especificar mas de dos variables:
+```{r}
+diamantes<-data.frame(diamonds[,"price"],diamonds[,"carat"],diamonds[,"cut"])
+head(diamantes)
+
+ggplot(diamantes,aes(x=price,y=carat,color=cut)) +
+  geom_point(shape=1)
+
+```
+
+```{r}
+ggplot(diamantes,aes(x=price,y=carat)) +
+  geom_point(shape=1) +
+  geom_smooth(method=lm)   # añade recta de regresión con intervalo de confianza 95%
+```
+  
+  
+```{r}
+ggplot(cars, aes(x=speed, y=dist)) +
+    geom_point(shape=1) +    #  usa círculos huecos
+    geom_smooth(method=lm)   # añade recta de regresión con intervalo de confianza 95% 
+```
+  
+```{r}
+ggplot(cars, aes(x=speed, y=dist)) +
+    geom_point(shape=1) +    # usa círculos huecos
+    geom_smooth(method=lm, se=FALSE)  # añade recta de regresión sin región de confianza
+```
+  
+```{r}
+ggplot(diamantes,aes(x=price,y=carat)) +
+  geom_point(shape=25, size=1) +   #especificamos forma y tamaño
+  geom_smooth(method=lm)  
+```
+  
+```{r}
+ggplot(diamantes,aes(x=price,y=carat)) +
+  geom_point(alpha=0.05)
+
+```
+  
+```{r}
+#se puede hacer un scatterplot con bins en rectángulos coloreados en funciónd e una variable
+ggplot(diamantes,aes(x=price,y=carat)) +
+  stat_bin2d()
+
+
+```
+
