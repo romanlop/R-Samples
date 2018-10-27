@@ -3,4 +3,126 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+Histogramas
+Cargamos el dataset de vehículos y consumos. Pintamos un histogama de sus consumos en autovía.
+
+```{r}
+data(mpg)
+help(mpg)
+head(mpg)
+```
+
+Histográma básico
+```{r}
+hist(mpg$hwy)
+hist(mpg$cty)
+```
+
+Representaciones en ggpllot de histogramas con opciones de curva de densidad y establecimiento del número de barras en las que se parte la representación.
+
+```{r}
+ggplot(mpg, aes(x=hwy)) + geom_histogram(binwidth=3) #establece el ancho de cada partición
+```
+
+```{r}
+ggplot(mpg, aes(x=hwy)) + geom_histogram(bins=30) #establece el ancho de cada partición
+```
+
+```{r}
+ggplot(mpg, aes(x=hwy)) +
+    geom_histogram(binwidth=0.5, colour="black", fill="white") #opciones de color
+```
+
+```{r}
+# pinta una curva de densidad
+ggplot(mpg, aes(x=hwy)) + geom_density(fill="red")
+```
+
+```{r}
+
+# histograma con curva de densidad
+ggplot(mpg, aes(x=hwy)) + 
+    geom_histogram(aes(y=..density..),binwidth=2, colour="black", fill="blue") +
+    geom_density(alpha=.2, fill="red")  #rellenado de la curva de densidad en rojo suave
+```
+
+También se pueden representar histogramas en los que se divida la variable respecto a varias categorías. Para ello vamos a seleccionar dos manufacturadores, audi y volkswagen
+
+```{r}
+unique(unlist(mpg[,"manufacturer"]))
+mpg_subset <- mpg[mpg$manufacturer=="audi" | mpg$manufacturer=="volkswagen" , ]
+mpg_audi <- mpg[mpg$manufacturer=="audi",]
+mpg_volkswagen <- mpg[mpg$manufacturer=="volkswagen",]
+
+#Histograma Audi
+ggplot(mpg_audi, aes(x=hwy)) +
+    geom_histogram(binwidth=1, colour="black", fill="white") #opciones de color
+
+#Histograma volkswagen
+ggplot(mpg_volkswagen, aes(x=hwy)) +
+    geom_histogram(binwidth=1, colour="black", fill="white") #opciones de color
+
+# histogramas superpuestos
+ggplot(mpg_subset, aes(x=hwy, fill=manufacturer)) +
+    geom_histogram(binwidth=2, alpha=.5,position="identity")  #position identity es para superponer la barra
+
+# La diferencia entre identity y stack se explica aquí: https://stackoverflow.com/questions/44033592/what-is-the-difference-between-position-stack-vs-identity-in-ggplot
+
+# histogramas superpuestos
+ggplot(mpg_subset, aes(x=hwy, fill=manufacturer)) +
+    geom_histogram(binwidth=2, alpha=.5,position="stack")  #position identity es para superponer la barra
+
+#Para ver la diferencia hay qye fijarse en el valor X=25. Con Identity, se representa dentro de la misma barra (con la misma altura) los dos "manufacturer". En la opción "Stack" se apila, creciendo la barra.
+
+```
+
+También se pueden intercalar, con position="dodge"
+```{r}
+ggplot(mpg_subset, aes(x=hwy, fill=manufacturer)) +
+    geom_histogram(binwidth=2, position="dodge")
+```
+
+Vemos como sería con todos los fabricantes.
+```{r}
+ggplot(mpg, aes(x=hwy, fill=manufacturer)) +
+    geom_histogram(binwidth=2, alpha=.5,position="stack")
+```
+
+Curvas de Densidad
+```{r}
+ggplot(mpg_subset, aes(x=hwy)) + geom_density()
+ggplot(mpg_subset, aes(x=hwy, fill=manufacturer)) + geom_density(position="stack")
+ggplot(mpg_subset, aes(x=hwy, fill=manufacturer)) + geom_density(position="identity")
+```
+
+```{r}
+# curvas de densidad con rellenado transparente
+ggplot(mpg_subset, aes(x=hwy, fill=manufacturer)) + geom_density(alpha=.3)
+```
+
+Otros Histpogramas mas sofisticados
+```{r}
+diamonds_small <- diamonds[sample(nrow(diamonds), 1000), ]
+ggplot(diamonds_small, aes(x = price)) + geom_histogram()
+```
+
+```{r}
+ggplot(diamonds_small, aes(x = price)) + geom_histogram(binwidth =1000)
+```
+
+```{r}
+#polinomios de frecuencias con colores en función de un factor
+ggplot(diamonds_small, aes(price, ..density.., colour = cut)) + geom_freqpoly(binwidth = 1000)
+```
+
+```{r}
+#más opciones, histogramas solapados con distintos colores en función de un factor
+ggplot(diamonds_small, aes(x=price, fill=cut)) +
+    geom_histogram(binwidth=1000, alpha=.5,position="stack") 
+```
+
+```{r}
+#gráficos de densidad con diferentes factores marcando colores
+ggplot(diamonds_small, aes(price, fill = cut)) + geom_density(alpha = 0.2)
+```
 
