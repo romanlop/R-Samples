@@ -3,17 +3,175 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-
+# Read Data
 ```{r}
-plot(cars)
+#install.packages("sqldf")    #https://cran.r-project.org/web/packages/sqldf/sqldf.pdf   Permite realizar búsquedas sobre dataframes con sintaxis sql
+library(sqldf)
+#install.packages("fmsb")  #Several utility functions for the book entitled "Practices of Medical and Health Data Analysis using R" (Pearson Education Japan, 2007) with Japanese demographic data and some demographic analysis related functions.
+library(fmsb)
+library(plotly)  #https://plot.ly/r/
+
+video_games<-read.csv("recursos/vgsales.csv")
+typeof(video_games)
+head(video_games)
+
+video_games$Year <- ordered(video_games$Year)
+video_games <- video_games[video_games$Year<2017,]
+video_games
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+# Explore Sales by Year and Platform {.tabset}
+```{r}
+ByYear<-sqldf("SELECT Platform, Year, sum(NA_Sales) as AME, sum(EU_Sales) as EU,sum(JP_Sales) as JP, sum(Other_Sales) as Other, sum(Global_Sales) as Global from video_games group by Platform, Year order by Year,Platform")
+```
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+#Ventas anuales. Todas las Plataformas
+```{r}
+All<- sqldf("SELECT Year, sum(NA_Sales) as AME, sum(EU_Sales) as EU,sum(JP_Sales) as JP, sum(Other_Sales) as Other, sum(Global_Sales) as Global from df group by Year order by Year")
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+#https://plot.ly/r/line-charts/
+plot_ly(All,type = 'scatter', mode = 'lines') %>%
+  add_trace(y=All$Global,x=All$Year,name='Global Sale',mode = 'lines')%>%
+  add_trace(y=All$AME,x=All$Year,mode = 'lines',name='American Sale')%>%
+  add_trace(y=All$EU,x=All$Year,mode = 'lines',name='European Sale')%>%
+  add_trace(y=All$JP,x=All$Year,name='Japen Sales',mode = 'lines')%>%
+  add_trace(y=All$Other,x=All$Year,name='Other Sale',mode = 'lines')%>%
+  layout(title = "Ventas de Videjuegos Anuales por Región",
+         xaxis = list(title = "Años"),
+         yaxis = list (title = "Ventas en Millones"))
+```
+
+Lo mismo pero solo para un par de tipos de consola: PS2, PS3 y PS4.
+```{r results='asis',message=FALSE,warning=FALSE}
+PS2<-subset(ByYear,Platform=="PS2",select = Platform:Global)
+PS3<-subset(ByYear,Platform=="PS3",select = Platform:Global)
+PS4<-subset(ByYear,Platform=="PS4",select = Platform:Global)
+
+plot_ly(ByYear,type = 'scatter', mode = 'lines') %>%
+  add_trace(y=PS2$Global,x=PS2$Year,name='Global Sale PS2',mode = 'lines+markers') %>%
+  add_trace(y=PS3$Global,x=PS3$Year,name='Global Sale PS3',mode = 'lines+markers') %>%
+  add_trace(y=PS4$Global,x=PS4$Year,name='Global Sale PS4',mode = 'lines+markers') %>%
+  layout(title = "Evolución Ventas PlayStation",
+         xaxis = list(title = "Años"),
+         yaxis = list (title = "Ventas en Millones"))
+```
+
+Detalle PS2 por año y región
+```{r results='asis',message=FALSE,warning=FALSE}
+PS2<-ByYear[ByYear$Platform=='PS2',]
+
+plot_ly(PS2, type = 'bar', name = 'Ventas PS2 por Región') %>%
+  add_trace(y=PS2$AME,x=PS2$Year,name='America',mode = 'bar') %>%
+  add_trace(y=PS2$EU,x=PS2$Year,name='Europa',mode = 'bar') %>%
+  add_trace(y=PS2$JP,x=PS2$Year,name='Japan',mode = 'bar') %>%
+  add_trace(y=PS2$Other,x=PS2$Year,name='Other',mode = 'bar') %>%
+  add_trace(y=PS2$Other,x=PS2$Year,name='Global',mode = 'bar')%>%
+  layout(title = "Ventas PS2 por año y Región",
+         scene = list(
+           xaxis = list(title = "Año"), 
+           yaxis = list(title = "Ventas")))
+
+PS3<-ByYear[ByYear$Platform=='PS3',]
+
+plot_ly(PS3, type = 'bar', name = 'Ventas PS3 por Región') %>%
+  add_trace(y=PS3$AME,x=PS3$Year,name='America',mode = 'bar') %>%
+  add_trace(y=PS3$EU,x=PS3$Year,name='Europa',mode = 'bar') %>%
+  add_trace(y=PS3$JP,x=PS3$Year,name='Japan',mode = 'bar') %>%
+  add_trace(y=PS3$Other,x=PS3$Year,name='Other',mode = 'bar') %>%
+  add_trace(y=PS3$Other,x=PS3$Year,name='Global',mode = 'bar')%>%
+  layout(title = "Ventas PS3 por año y Región",
+         scene = list(
+           xaxis = list(title = "Año"), 
+           yaxis = list(title = "Ventas")))
+
+PS4<-ByYear[ByYear$Platform=='PS4',]
+
+plot_ly(PS4, type = 'bar', name = 'Ventas PS4 por Región') %>%
+  add_trace(y=PS4$AME,x=PS4$Year,name='America',mode = 'bar') %>%
+  add_trace(y=PS4$EU,x=PS4$Year,name='Europa',mode = 'bar') %>%
+  add_trace(y=PS4$JP,x=PS4$Year,name='Japan',mode = 'bar') %>%
+  add_trace(y=PS4$Other,x=PS4$Year,name='Other',mode = 'bar') %>%
+  add_trace(y=PS4$Other,x=PS4$Year,name='Global',mode = 'bar')%>%
+  layout(title = "Ventas PS4 por año y Región",
+         scene = list(
+           xaxis = list(title = "Año"), 
+           yaxis = list(title = "Ventas")))
+
+```
+
+Ventas globales por plataforma (principales plataformas)
+```{r}
+
+Platform_data<- sqldf("SELECT Platform, sum(NA_Sales) as AME, sum(EU_Sales) as EU,sum(JP_Sales) as JP, sum(Other_Sales) as Other, sum(Global_Sales) as Global from video_games where platform in('DS','PS','PS2','PS3','Wii','X360','PSP','PS4') group by Platform order by Platform")
+Platform_data
+
+plot_ly(Platform_data, labels = ~Platform, values = ~Global, type = 'pie') %>%
+  layout(title = 'Ventas totales por consola',
+         xaxis = list(showgrid = TRUE, zeroline = TRUE, showticklabels = TRUE),
+         yaxis = list(showgrid = TRUE, zeroline = TRUE, showticklabels = TRUE))
+
+
+plot_ly(Platform_data, labels = ~Platform, values = ~EU, type = 'pie') %>%
+  layout(title = 'Ventas totales por consola',
+         xaxis = list(showgrid = TRUE, zeroline = TRUE, showticklabels = TRUE),
+         yaxis = list(showgrid = TRUE, zeroline = TRUE, showticklabels = TRUE))
+
+```
+
+Ventas globales por genero 
+```{r}
+Genre_data<- sqldf("SELECT Genre, sum(NA_Sales) as AME, sum(EU_Sales) as EU,sum(JP_Sales) as JP, sum(Other_Sales) as Other, sum(Global_Sales) as Global from video_games  group by Genre order by Platform")
+Genre_data
+
+plot_ly(Genre_data, x = ~Genre, y = ~Global, type = 'bar', text = text,
+        marker = list(color = 'rgb(158,202,225)',
+                      line = list(color = 'rgb(8,48,107)',
+                                  width = 0.5))) %>%
+  layout(title = "Ventas Globales por Genero.",
+         xaxis = list(title = "",size = 40,color = "#7f7f44"),
+         yaxis = list(title = ""))
+
+plot_ly(Genre_data, x = ~Genre, y = ~AME, type = 'bar', text = text,
+        marker = list(color = 'rgb(158,202,225)',
+                      line = list(color = 'rgb(8,48,107)',
+                                  width = 0.5))) %>%
+  layout(title = "Ventas Globales por Genero.",
+         xaxis = list(title = "",size = 40,color = "#7f7f44"),
+         yaxis = list(title = ""))
+
+plot_ly(Genre_data, x = ~Genre, y = ~EU, type = 'bar', text = text,
+        marker = list(color = 'rgb(158,202,225)',
+                      line = list(color = 'rgb(8,48,107)',
+                                  width = 0.5))) %>%
+  layout(title = "Ventas Globales por Genero.",
+         xaxis = list(title = "",size = 40,color = "#7f7f44"),
+         yaxis = list(title = ""))
+
+plot_ly(Genre_data, x = ~Genre, y = ~JP, type = 'bar', text = text,
+        marker = list(color = 'rgb(158,202,225)',
+                      line = list(color = 'rgb(8,48,107)',
+                                  width = 0.5))) %>%
+  layout(title = "Ventas Globales por Genero.",
+         xaxis = list(title = "",size = 40,color = "#7f7f44"),
+         yaxis = list(title = ""))
+
+```
+
+## Por plataforma y Genero
+```{r}
+Genre_plat_data<- sqldf("SELECT Platform, Genre, sum(NA_Sales) as AME, sum(EU_Sales) as EU,sum(JP_Sales) as JP, sum(Other_Sales) as Other, sum(Global_Sales) as Global from video_games group by Platform, Genre order by Platform")
+
+gpd_ps4<-Genre_plat_data[Genre_plat_data$Platform=='PS4',]
+gpd_ps4
+plot_ly(gpd_ps4, labels = ~Genre, values = ~Global) %>%
+  add_pie(hole = 0.6) %>%
+  layout(title = "Ventas Ps4 por Género",  showlegend = F,
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+```
+
+
+
 
