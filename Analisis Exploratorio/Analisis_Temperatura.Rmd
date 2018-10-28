@@ -1,0 +1,78 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Análisis exploratorio de datos climáticos
+Realizamos un estudio gráfico de la evolución de la temperatura global desde 1850. Queremos saber:
+
+Si ha habido un aumento significativo de la misma.
+Si se producen más anomalías que antes térmicamente.
+Sacar ideas y descriptores a partir de la información proporcionada.
+
+```{r}
+rm(list=ls())
+```
+
+```{r}
+library(reshape2) #facilita la trasnformación entre diferentes formatos de datos.
+library(plotly) #https://plot.ly/r/
+```
+
+
+Global Land and Ocean-and-Land Temperatures (GlobalTemperatures.csv):
+
+Date: starts in 1750 for average land temperature and 1850 for max and min land temperatures and global ocean and land temperatures
+LandAverageTemperature: global average land temperature in celsius
+LandAverageTemperatureUncertainty: the 95% confidence interval around the average
+LandMaxTemperature: global average maximum land temperature in celsius
+LandMaxTemperatureUncertainty: the 95% confidence interval around the maximum land temperature
+LandMinTemperature: global average minimum land temperature in celsius
+LandMinTemperatureUncertainty: the 95% confidence interval around the minimum land temperature
+LandAndOceanAverageTemperature: global average land and ocean temperature in celsius
+LandAndOceanAverageTemperatureUncertainty: the 95% confidence interval around the global average land and ocean temperature
+
+```{r}
+temperaturas<-read.csv("recursos/GlobalTemperatures.csv")
+head(temperaturas)
+
+```
+
+```{r}
+# eliminamos los valores faltantes
+temperaturas <- na.omit(temperaturas)
+
+# damos formato de fecha a la columna dt (Date)
+temperaturas$dt <- as.Date(temperaturas$dt,"%Y-%m-%d")
+
+# creamos una columna con información de mes y otra con información de año 
+temperaturas$Month<-as.numeric(format(temperaturas$dt,"%m"))
+temperaturas$Month.String<-format(temperaturas$dt,"%B")
+temperaturas$Year<-as.numeric(format(temperaturas$dt,"%Y"))
+
+temperaturas
+
+head(df, 20)
+```
+
+
+Representamos las temperaturas medias por mes desde 1850. Se puede observar claramente que si bien la temperatura de la tierra se mantiene en una subida suave, la de la tierra y océano tiene una subida más pronunciada en el tiempo.
+
+```{r results='asis',message=FALSE,warning=FALSE}
+library(ggplot2)
+library(dplyr) #https://rsanchezs.gitbooks.io/rprogramming/content/chapter9/dplyr.html
+library(plotly)
+
+#Tierra
+leyenda=reorder(temperaturas$Month.String,-temperaturas$LandAverageTemperature,mean)   #El "-" permite ordenar al revés
+plot_ly(data = temperaturas, x = ~Year, y = ~LandAverageTemperature, color = leyenda) %>%
+  layout(legend = list(x = 1, y = 0.8),title='Variación de la Temperatura Terrestre')
+
+#Mar y tierra
+leyenda=reorder(temperaturas$Month.String,-temperaturas$LandAndOceanAverageTemperature,mean)   #El "-" permite ordenar al revés
+plot_ly(data = temperaturas, x = ~Year, y = ~LandAndOceanAverageTemperature, color = leyenda) %>%
+  layout(legend = list(x = 1, y = 0.8),title='Variación de la Temperatura Media de Mar y Tierra')
+
+```
+
+
