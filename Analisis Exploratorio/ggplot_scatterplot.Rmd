@@ -101,3 +101,34 @@ ggplot(diamantes,aes(x=price,y=carat)) +
 
 ```
 
+
+
+Ajustando modelos lineales gráficamente
+Veremos otro tipo de dibujos que se pueden hacer sobre los scatterplots en los que aparecen representados modelos lineales con su rango de variación con un cierto intervalo de confianza. Cargamos otro data set
+```{r}
+data(cars)
+head(cars)
+```
+
+```{r}
+sp <- ggplot(cars, aes(x = speed, y = dist))
+sp + geom_point()
+
+```
+
+Añadimos recta de regresión con región de variación
+```{r}
+sp + geom_point() + stat_smooth(method = lm)
+```
+
+```{r}
+sp + geom_point() + stat_smooth(method = lm, level = 0.999)
+```
+
+Pintamos una curva regularizada ó regresión lineal suavizada
+```{r}
+#Loess: La regresión local es un tipo de ajuste de curvas a datos mediante suavizados en los que el ajuste en x se realiza utilizando únicamente observaciones en el entorno de x.
+sp + geom_point() + stat_smooth(method = loess, se = FALSE)
+```
+
+

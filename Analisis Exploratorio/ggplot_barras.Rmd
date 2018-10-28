@@ -1,0 +1,144 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Gráficos de barras y Gráficos de factor con barras de error
+
+```{r}
+rm(list=ls())
+```
+
+
+```{r}
+#install.packages("reshape2")
+library(reshape2)
+data(tips)
+help(tips)
+head(tips)
+```
+
+```{r}
+# gráfico de barras básico de factura total respecto a hora del día
+# se consume más en el almuerzo que en la cena
+ggplot(data=tips, aes(x=time, y=total_bill)) +
+    geom_bar(stat="identity")
+
+mean(tips$total_bill)
+mean(tips$tip)
+
+sum(subset(tips,time=="Dinner",select=total_bill))
+sum(subset(tips,time=="Lunch",select=total_bill))
+```
+
+```{r}
+# pintamos la anterior gráfica de barras según la categoría fumador
+ggplot(data=tips, aes(x=time, y=total_bill, fill=smoker)) +
+    geom_bar(stat="identity")
+```
+
+```{r}
+#Propinas por Sexo
+ggplot(data=tips, aes(x=sex, y=tip)) +
+    geom_bar(stat="identity")
+
+```
+
+```{r}
+#cuenta de clientes por día
+ggplot(data=tips, aes(x=day)) +
+    geom_bar(stat="count") 
+```
+
+```{r}
+#Total facturado por día
+ggplot(data=tips, aes(x=day,y=total_bill)) +
+    geom_bar(stat="identity") 
+```
+
+```{r}
+#Media facturado por día
+ggplot(data=tips, aes(x=day,y=total_bill)) +
+    geom_bar(stat="summary", fun.y = "mean") 
+
+#Media facturado por día
+ggplot(data=tips, aes(x=day,y=total_bill)) +
+    geom_bar(stat="summary") 
+
+#para mas info de sumarización, ver https://ggplot2.tidyverse.org/reference/stat_summary.html
+
+
+#Mediana facturado por día
+ggplot(data=tips, aes(x=day,y=total_bill)) +
+  geom_bar(stat="summary", fun.y = "mean") +
+  stat_summary(fun.y = "median", colour = "red", size = 2, geom = "point") +
+```
+
+
+Gráficos de factor con barras de error
+Son gráficos parecidos a los de barras pero con líneas que unen puntos. Cargamos un dataset de crecimiento de dientes en cerdos guineanos.
+
+```{r}
+data(ToothGrowth)
+help("ToothGrowth")
+head(ToothGrowth)
+```
+
+The R package Rmisc is a colletion of functions useful for data analysis and utility operations.
+```{r}
+#install.packages("Rmisc")
+library(Rmisc)
+```
+
+Realizamos un sumario de las variables que nos permite realizar representaciones con márgenes de confianza. Utilizamos para ello la función summarySE.
+Devuelve: "a data frame with count, mean, standard deviation, standard error of the mean, and confidence interval (default 95%)."
+```{r}
+#realizamos el sumario para la variable len, agrupado en las otras dos.
+
+x<-subset(ToothGrowth,supp=="OJ" & dose==0.5,select = c("len"))
+mean(x$len)
+
+tgc <- summarySE(ToothGrowth, measurevar="len", groupvars=c("supp","dose"))
+tgc
+```
+
+Hacemos gráficas de factor. Podemos observar la diferencia de aplicar al cerdo un supemento u otro. Las barras verticales son intervalos de confianza al 95% de los valores de longitud del diente según la cantidad de dosis aportada en cada suplemeneto.
+
+```{r}
+# factor plot con error bars
+ggplot(tgc, aes(x=dose, y=len, colour=supp)) +
+  geom_line() +
+  geom_point() + 
+  geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1)
+  
+```
+
+Vemos como quedaría con los datos de propinas por día
+```{r}
+tips
+#como hay varias muestras para cada día de la semana, las líneas son verticales.
+ggplot(data=tips, aes(x=day,y=tip)) +
+    geom_line() +
+    geom_point() 
+
+tips_smrz <- summarySE(tips, measurevar="tip", groupvars=c("day"))
+tips_smrz
+
+ggplot(data=tips_smrz, aes(x=day,y=tip)) +
+    geom_point() +
+    geom_line() 
+```
+
+Graficos de Caja
+```{r}
+p <- ggplot(diamonds, aes(cut, price))
+p + geom_boxplot()
+```
+
+```{r}
+#propina en función de día
+#el domingo pagan más en media pero el sábado hay más gente optimista con propinas altas
+ggplot(tips, aes(day, tip)) +  
+  geom_boxplot() + coord_flip()
+```
+
