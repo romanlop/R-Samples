@@ -17,6 +17,7 @@ rm(list=ls())
 ```{r}
 library(reshape2) #facilita la trasnformación entre diferentes formatos de datos.
 library(plotly) #https://plot.ly/r/
+library(sqldf)
 ```
 
 
@@ -47,7 +48,7 @@ temperaturas$dt <- as.Date(temperaturas$dt,"%Y-%m-%d")
 
 # creamos una columna con información de mes y otra con información de año 
 temperaturas$Month<-as.numeric(format(temperaturas$dt,"%m"))
-temperaturas$Month.String<-format(temperaturas$dt,"%B")
+temperaturas$MonthString<-format(temperaturas$dt,"%B")
 temperaturas$Year<-as.numeric(format(temperaturas$dt,"%Y"))
 
 temperaturas
@@ -64,14 +65,99 @@ library(dplyr) #https://rsanchezs.gitbooks.io/rprogramming/content/chapter9/dply
 library(plotly)
 
 #Tierra
-leyenda=reorder(temperaturas$Month.String,-temperaturas$LandAverageTemperature,mean)   #El "-" permite ordenar al revés
+leyenda=reorder(temperaturas$MonthString,-temperaturas$LandAverageTemperature,mean)   #El "-" permite ordenar al revés
 plot_ly(data = temperaturas, x = ~Year, y = ~LandAverageTemperature, color = leyenda) %>%
   layout(legend = list(x = 1, y = 0.8),title='Variación de la Temperatura Terrestre')
 
 #Mar y tierra
-leyenda=reorder(temperaturas$Month.String,-temperaturas$LandAndOceanAverageTemperature,mean)   #El "-" permite ordenar al revés
+leyenda=reorder(temperaturas$MonthString,-temperaturas$LandAndOceanAverageTemperature,mean)   #El "-" permite ordenar al revés
 plot_ly(data = temperaturas, x = ~Year, y = ~LandAndOceanAverageTemperature, color = leyenda) %>%
   layout(legend = list(x = 1, y = 0.8),title='Variación de la Temperatura Media de Mar y Tierra')
+
+```
+
+Vemos que se produce un aumento significativo a simple vista. Vamos a tratar de cuantificarlo para cada mes.
+```{r}
+evolucion_temperaturas<-sqldf("SELECT Year, MonthString,LandAverageTemperature from temperaturas  WHERE Year in(1850,2015)")
+temperaturas_1850=evolucion_temperaturas[evolucion_temperaturas$Year=="1850",]
+temperaturas_2015=evolucion_temperaturas[evolucion_temperaturas$Year=="2015",]
+evolucion<-data.frame("Month"=c(1,2,3,4,5,6,7,8,9,10,11,12), "MonthString"=temperaturas_1850$MonthString,"Diferencia"=temperaturas_2015$LandAverageTemperature-temperaturas_1850$LandAverageTemperature)
+
+plot_ly(evolucion, x = reorder(evolucion$MonthString,evolucion$Month,min),  y = ~Diferencia,
+  name = "Evolución Temperatura por mes",
+  type = "bar"
+)%>%
+  layout(title = "Evolución temperaturas desde 1850.",
+         xaxis = list(title = "",size = 40,color = "blue"),
+         yaxis = list(title = "Diferencia en Grados"))
+```
+Observamos que tanto la máxima como la mínima temperatura por año han aumentado casi 3º C desde 1850.
+
+Vamos a revisar las temperaturas máximas y minimas por año
+```{r}
+max<-temperaturas %>%
+  group_by(Year) %>%
+  summarise(MaxTemp=max(LandMaxTemperature,na.rm = TRUE))
+
+min<-temperaturas %>%
+  group_by(Year) %>%
+  summarise(MinTemp=min(LandMinTemperature,na.rm = TRUE)) -> MinByYear
+
+ggplot(max, aes(x=Year, y=MaxTemp)) + 
+    geom_point() +
+    stat_smooth(method = loess, se = FALSE)
+
+ggplot(min, aes(x=Year, y=MinTemp)) + 
+    geom_point() +
+    stat_smooth(method = loess, se = FALSE)
+```
+Vemos que las máximas subieron en torno a 2 grados y las mínimas 1,5.
+
+
+Vamos a revisar las temperaturas máximas y mínimas medias por año
+```{r}
+max_promedio<-temperaturas %>%
+  group_by(Year) %>%
+  summarise(MaxTemp=mean(LandMaxTemperature,na.rm = TRUE))
+
+min_promedio<-temperaturas %>%
+  group_by(Year) %>%
+  summarise(MinTemp=mean(LandMinTemperature,na.rm = TRUE)) -> MinByYear
+
+ggplot(max_promedio, aes(x=Year, y=MaxTemp, color=MaxTemp)) + 
+    geom_point() +
+    stat_smooth(method = loess, se = FALSE) +
+    scale_colour_gradientn(colours = terrain.colors(10)) +
+    labs(title = "Temperaturas máximas Promedio")
+
+ggplot(min_promedio, aes(x=Year, y=MinTemp, color=MinTemp)) + 
+    geom_point() +
+    stat_smooth(method = loess, se = FALSE) +
+    scale_colour_gradient(low = "white", high = "black") +
+    labs(title = "Temperaturas mínimas Promedio")
+```
+
+Vemos que había mas anomalías antes. 
+
+
+
+```{r}
+ggplot(temperaturas,aes(x=dt,y=LandAndOceanAverageTemperatureUncertainty))+
+  geom_point(shape=1)+
+  geom_smooth(method="loess")+
+  labs(title="Media de la incertidumbre en temperatura de tierra y océano a lo largo del tiempo",
+       x="Año",
+       y="Incertidumbre de temperatura media")
+```
+
+```{r}
+temperaturas$MonthFactor <- as.factor(temperaturas$Month)
+
+qplot(x = reorder(temperaturas$MonthString,temperaturas$Month,mean), y = LandAndOceanAverageTemperature, data = temperaturas) +
+  ggtitle("Gráfico de caja de la temperatura media por mes")+
+  geom_boxplot(fill="blue1") +
+  labs(x = " ")
+  
 
 ```
 
