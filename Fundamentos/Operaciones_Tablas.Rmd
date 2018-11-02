@@ -4,6 +4,8 @@ output: html_notebook
 ---
 
 Operaciones de descripción y agrupación sobre tablas
+Ver: https://www.datacamp.com/community/tutorials/r-tutorial-apply-family?utm_source=adwords_ppc&utm_campaignid=898687156&utm_adgroupid=48947256715&utm_device=c&utm_keyword=&utm_matchtype=b&utm_network=g&utm_adpostion=1t1&utm_creative=255798340456&utm_targetid=aud-299261629574:dsa-473406586995&utm_loc_interest_ms=&utm_loc_physical_ms=1005483&gclid=CjwKCAjwpeXeBRA6EiwAyoJPKh_r-drJAjBZpDr7UBxRqOQ_QZkKQFFOa3ds4IlcbWIPTPWDT06vQBoCvWgQAvD_BwE#codesapplycode
+
 
 Operaciones agregantes
 apply y sapply aplican una función agregante por fila ó columna
