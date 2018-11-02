@@ -11,6 +11,8 @@ Carga el dataset **titanic** con el comando y haz un sumario
 ```{r}
  #install.packages("titanic")
  library(titanic)
+ library("ggplot2")
+ library(dplyr)
  data("titanic_train")
  titanic_data <- titanic_train
  head(df)
@@ -19,7 +21,6 @@ Carga el dataset **titanic** con el comando y haz un sumario
 - Transforma las variables que sean factores en factores. Si son ordinales usa *ordered* para crear factores ordenados. Recuerda usar lapply.
 
 - Representa en un qplot la edad frente a la tarifa, y en un segundo qplot lo mismo pero con la clave de la clase en la que viajaban. Represéntalo a su vez factorizándolo por *Sex* y *Embarked*
-
 - Pinta un boxplot de la edad agrupado según *Sex*
 - Pinta un barplot que represente la supervivencia en cada *Pclass* coloreando las barras según esta
 - Pinta la supervivencia en función de la categoría *Sex*, ¿qué observas?
@@ -51,5 +52,70 @@ titanic_data
 ```
 
 
+Representa en un qplot la edad frente a la tarifa, y en un segundo qplot lo mismo pero con la clave de la clase en la que viajaban. 
+```{r}
 
+ggplot(titanic_data, aes(x=Age, y=Fare)) + 
+  geom_point(na.rm=TRUE) +
+  ggtitle ("Titanic: Edad vs Tarifa.") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#con clase en la que viajaban
+ggplot(titanic_data, aes(x=Age, y=Fare, color=Pclass)) + 
+  geom_point(na.rm=TRUE) +
+  ggtitle ("Titanic: Edad vs Tarifa.") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+  
+```
+
+
+Represéntalo a su vez factorizándolo por *Sex* y *Embarked*
+
+```{r}
+ggplot(titanic_data, aes(x=Age, y=Fare, colour=Pclass)) +
+  geom_point(na.rm=TRUE) +
+  facet_grid(Sex ~ Embarked)
+
+```
+
+- Pinta un boxplot de la edad agrupado según *Sex*
+```{r}
+p <- ggplot(titanic_data, aes(Sex, Age))
+p + geom_boxplot()
+```
+
+- Pinta un barplot que represente la supervivencia en cada *Pclass* coloreando las barras según esta
+```{r}
+ggplot(titanic_data, aes(Pclass, fill=Survived))+geom_bar()
+```
+
+- Pinta la supervivencia en función de la categoría *Sex*, ¿qué observas?
+- Pinta la supervivencia en función de la categoría *Pclass*, ¿qué se aprecia?
+```{r}
+ggplot(titanic_data, aes(Pclass, fill=Sex))+geom_bar()
+ggplot(data=titanic_data, aes(Sex, fill=Survived)) +
+    geom_bar()
+```
+Han sobrevivido muchas mas mujeres en total y en %.
+
+- Crea un histograma de *Age*, ¿qué observas?
+```{r}
+ggplot(titanic_data, aes(x=Age)) + geom_histogram(binwidth=4,na.rm = TRUE) #establece el ancho de cada partición
+```
+
+#La mayor parte de la gente se contentraba entre los 18 y los 40 años.
+
+- Crea una agrupación de los datos usando `dplyr` de *Sex*  y *Pclass*. Haz sumarios de media, conteo y mediana. ¿Qué podrías decir de los resultados? ¿Hay suficiente muestra para sacar conclusiones en todas las categorías creadas al combinar la edad y la clase?
+```{r}
+
+titanic_data$DummySurvived <- as.numeric(titanic_data$Survived) -1 #hay que crear una columna tipo int, ya que la original es un factor.
+
+titanic_data %>%
+    group_by(Sex,Pclass) %>%
+    summarise(mean(DummySurvived),median(DummySurvived), Conteo=n() )
+
+```
 
