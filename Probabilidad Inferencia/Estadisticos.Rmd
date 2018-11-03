@@ -1,0 +1,19 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Estadísticos descriptivos:
+Los estadísticos descriptivos son funciones que se toman de una muestra de una población que se puede aproximar por una distribución probabilística concreta.
+
+Hay infinidad de estadísticos posibles, los fundamentales son:
+
+  -Media muestral: es un estimado de la esperanza matemática.
+  -Varianza y desviación típica muestrales: aproximan la varianza y la desviación típica.
+  -Cuantil muestral: aproximan a los cuantiles.
+  -Mediana muestral: es el cuantil muestral 0.5 que deja la mitad de los valores por encima y la mitad por debajo.
+  -Rango muestral: indican el rango de valores de la muestra, concretamente el máximo muestral y el mínimo muestral.
+  -Covarianza muestral: se toma ente dos variables y es un indicador de la cantidad de variación de una variable que queda explicada por la otra.
+  -Correlación muestral: indica la correlación entre dos vectores, que es la cantidad de dependencia de ambos normalizado al intervalo [-1, 1], donde -1 es una relación inversamente proporcional perfecta y 1 una relación directamente proporcional perfecta.
+  -Curtosis y sesgo muestrales: la curtosis indica cómo de homogénea es la distribución de los datos y el sesgo si están acumulados a alguno de los extremos superior ó inferior.
+
