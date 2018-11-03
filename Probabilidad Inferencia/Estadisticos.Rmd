@@ -17,3 +17,258 @@ Hay infinidad de estadísticos posibles, los fundamentales son:
   -Correlación muestral: indica la correlación entre dos vectores, que es la cantidad de dependencia de ambos normalizado al intervalo [-1, 1], donde -1 es una relación inversamente proporcional perfecta y 1 una relación directamente proporcional perfecta.
   -Curtosis y sesgo muestrales: la curtosis indica cómo de homogénea es la distribución de los datos y el sesgo si están acumulados a alguno de los extremos superior ó inferior.
 
+```{r}
+x<-c(1,2,3,4,5)
+y<-c(1,3,3,1,5)
+z<-c(1,3,3,4,4)
+k<-c(5,6,7,8,9)
+j<-c(15,22,45,99,189)
+p<-c(3,4,6,1,2,3,5)
+
+mean(x)
+mean(y)
+mean(z)
+```
+
+La desviación típica o desviación estándar (denotada con el símbolo σ o s, dependiendo de la procedencia del conjunto de datos) es una medida de dispersión para variables de razón (variables cuantitativas o cantidades racionales) y de intervalo. Se define como la raíz cuadrada de la varianza de la variable.
+En teoría de probabilidad, la varianza o variancia (que suele representarse como {\displaystyle \sigma ^{2}} \sigma^2) de una variable aleatoria es una medida de dispersión definida como la esperanza del cuadrado de la desviación de dicha variable respecto a su media.
+```{r}
+var(x)
+var(y)
+var(z)
+```
+valor medio que divide en dos partes iguales
+```{r}
+median(x)
+median(y)
+median(z)
+```
+
+Rango muestral
+```{r}
+max(x)
+min(x)
+range(x)
+```
+
+-Covarianza muestral: se toma ente dos variables y es un indicador de la cantidad de variación de una variable que queda explicada por la otra.
+Interpretación de la covarianza: https://conceptosclaros.com/que-es-la-covarianza-y-como-se-calcula-estadistica-descriptiva/
+“La Covarianza es una especie de varianza entre dos variables”.
+Importante: No hagas mucho caso del valor de la Covarianza. Se ve influido por las unidades. El valor en sí no te dice nada pero si el signo.
+```{r}
+cov(x,y)
+cov(y,z)
+cov(x,k)
+cov(x,j)
+```
+
+-Correlación muestral (índice de pearson): indica la correlación entre dos vectores, que es la cantidad de dependencia de ambos normalizado al intervalo [-1, 1], donde -1 es una relación inversamente proporcional perfecta y 1 una relación directamente proporcional perfecta.
+```{r}
+cor(x,y)
+cor(z,y)
+cor(x,k)
+cor(x,j)
+```
+
+```{r}
+sort(x)
+sort(y)
+sort(z)
+sort(j)
+sort(k)
+```
+
+```{r}
+rank(x)
+rank(y) #La función rank indica la posición de los elementos de un vector: el primero, el segundo, etc.
+rank(k) #nótese que es igual que el de X.
+```
+
+```{r}
+order(x,decreasing=TRUE)
+order(p,decreasing=TRUE)
+order(y,decreasing=TRUE)
+
+```
+
+```{r}
+quantile(x)
+p<-c(1,2,3,4,2,2,2,2,2,4,6,5,5,5,5,5,5,5,5,5,2,6)
+quantile(p) #indica que por ejemplo el 75% de los valores están por debajo de 5.
+```
+
+```{r}
+quantile(x,c(0.1,0.5,0.9))
+```
+
+
+```{r}
+cumsum(y) #es una suma acumulativa de los valores del vector
+cummax(p) #va acumulando el máximo
+cummin(p) #va acumulando el mínimo
+cumprod(y) #producto acumulado
+```
+
+
+```{r}
+pmax(x,y,z,j) #máximo de todas las variables en cada posición del vector
+pmin(x,y,z,j) #máximo de todas las variables en cada posición del vector
+```
+
+---------------------------------------------------------------------------------------------------------------------------
+Para utilizar estos descriptores con DataFrames se puede utilizar sapply
+```{r}
+data("USArrests")
+head(USArrests)
+library(dplyr)
+```
+
+```{r}
+#Media de asesinatos.
+sapply(USArrests,mean)
+#Para una sola columna.
+#sapply(USArrests["Murder"],mean)
+sapply(USArrests,median)
+
+#varianza
+sapply(USArrests,var)
+#desviación tipica
+sapply(USArrests,sd)
+
+
+```
+
+minimos máximos y rango
+```{r}
+sapply(USArrests,max)
+sapply(USArrests,min)
+sapply(USArrests,range)
+
+#El estado con menos asesinatos.
+USArrests[which.min(USArrests[,"Murder"]),]
+
+```
+
+```{r}
+
+ggplot(USArrests, aes(x=Murder, y=Assault)) + 
+  geom_point(na.rm=TRUE) +
+  ggtitle ("USA: Relación entre asesinatos y asaltos.") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_smooth(method = "lm", se = FALSE)
+
+#Covarianza
+cov(USArrests["Murder"],USArrests["Assault"])
+#Correlación
+cor(USArrests["Murder"],USArrests["Assault"])
+#Vemos que hay una relación entre Asaltos y asesinatos.
+
+
+ggplot(USArrests, aes(x=Murder, y=Rape)) + 
+  geom_point(na.rm=TRUE) +
+  ggtitle ("USA: Relación entre asesinatos y violaciones") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_smooth(method = "lm", se = FALSE)
+
+#Covarianza
+cov(USArrests["Murder"],USArrests["Rape"])
+#Correlación
+cor(USArrests["Murder"],USArrests["Rape"])
+#Vemos que hay una relación entre Asesinatos y violaciones, pero menos marcada que entre Asesinatos y Asaltos. 
+
+
+ggplot(USArrests, aes(x=UrbanPop, y=Rape)) + 
+  geom_point(na.rm=TRUE) +
+  ggtitle ("USA: Relación entre violaciones y población urbana.") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_smooth(method = "lm", se = FALSE)
+
+#Covarianza
+cov(USArrests["UrbanPop"],USArrests["Rape"])
+#Correlación
+cor(USArrests["UrbanPop"],USArrests["Rape"])
+```
+
+Quantiles
+```{r}
+sapply(USArrests, quantile)
+```
+
+
+```{r}
+#Ordenado por Asesinatos
+USArrests[order(USArrests["Murder"]),]
+USArrests[order(USArrests["Rape"]),]
+```
+
+---------------------------------------------------------------------------------------------------------------------------
+Actividad de refuerzo
+—————----------------
+Tiramos un dado una serie de veces con los siguientes resultados: dados<-c(1,2,5,3,6,4,2,1,2,4,1,5,3,2,4,1,6,2,3,1,6,2,4,2,1) - Calcula su tabla de frecuencias absolutas y relativas usando table y length - Dibuja un barplot usando table, ¿crees que el dado está equilibrado? - Calcula las medidas de centralización: media, mediana, quantiles y de dispersión: varianza, desviación típica, coeficiente de variación de pearson, rango, rango intercuartílico. - Calcula medidas de forma: asimetría, curtosis (library(fBasics))
+
+```{r}
+dados<-c(1,2,5,3,6,4,2,1,2,4,1,5,3,2,4,1,6,2,3,1,6,2,4,2,1)
+```
+
+Frecuencia absoluta: el número de veces que aparece un valor, se representa con  donde el subíndice representa cada uno de los valores. La suma de las frecuencias absolutas es igual al número total de datos, representado por  
+```{r}
+table(dados)
+```
+
+recuencia relativa: el resultado de dividir la frecuencia absoluta de un determinado valor entre el número total de datos, se representa por  . La suma de la frecuencias relativas es igual a  . Lo cual puede verse fácilmente si se factoriza  .
+```{r}
+table(dados)/length(dados)
+```
+
+```{r}
+barplot(table(dados))
+```
+
+¿crees que el dado está equilibrado?  ------> Si, creo que entra dentro de lo normal.
+
+```{r}
+mean(dados)
+median(dados)
+sd(dados)
+var(dados)
+quantile(dados)
+#Indice de variación de Pearson es la Desviación / media
+sd(dados)/mean(dados)
+```
+
+Calcula medidas de forma: asimetría, curtosis (library(fBasics))
+Ver este enlace para entender la Curtosis y la asimetria.
+https://support.minitab.com/es-mx/minitab/18/help-and-how-to/statistics/basic-statistics/supporting-topics/data-concepts/how-skewness-and-kurtosis-affect-your-distribution/
+
+```{r}
+#install.packages("fBasics")
+library(fBasics) #facilica calculo de propiedades estadísticas básicas como las que acabamos de ver.
+kurtosis(dados)
+skewness(dados)
+```
+
+```{r}
+dados<-c(1,2,5,3,6,4,2,1,2,4,1,5,3,2,4,1,6,2,3,1,6,2,4,2,1,1,1,1,1,1,1,1,12,3,4,5,6,1,1,1,1,1,1,1,1,1,2,3,4,5,3,6,5,1,1,1,1,1,1,1)
+skewness(dados) #Asimetria Positiva
+print("Kurtosis") 
+kurtosis(dados)
+barplot(table(dados))
+
+
+dados<-c(1,2,5,3,6,4,2,1,2,4,1,5,3,2,4,1,6,2,3,1,6,2,6,6,6,6,6,6,6,5,5,5,5,5,5,3,4,5,6,6,6,6,6,6,6,6,6,6,2,3,4,5,3,6,5,1,1,3,3,4,1,1,5,5,6,6)
+skewness(dados) #Asimetria negativa
+print("Kurtosis")
+kurtosis(dados)
+barplot(table(dados))
+
+#tirada habitual de dados. La Asimetría tiende a cero
+dados<-sample(1:6,1000,replace=T)
+skewness(dados) #Asimetria tiende a cero
+print("Kurtosis") #La curtosis es negativa.
+kurtosis(dados)
+barplot(table(dados))
+```
+
