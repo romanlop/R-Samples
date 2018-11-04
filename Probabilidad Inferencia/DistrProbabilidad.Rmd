@@ -1,0 +1,57 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Distribuciones de probabilidad en R
+Las distribuciones en R tienen las funciones descritas en los apuntes seguidas del nombre en su sintaxis. A cada nombre de función dado por R se le agrega un prefijo:
+
+“d”: para la función de densidad (pdf en variable contínua) ó función de masa de probabilidad (pmf en variable discreta)
+“p”: para la función de distribución acumulada (cdf)
+“q”: para la función de cuantiles (qf)
+“r”: para generar número aleatorios acorde a la ley correspondiente
+Denotaremos las distribuciones por X.
+
+
+BERNUILLI
+Tomalos valores 0 (fracaso) y 1 (éxito). La probabilidad de éxito P(X=1) es igual que el parámetro p de la distribución.
+Se denota como Bernouilli(p)
+
+```{r}
+#Distribución de Bernouilli
+
+# Calculamos la P(X=1) de una Bernoulli(0.7)
+dbinom(1, 1,0.7)  #El segundo parámetro es el número de intentos.
+
+dbinom(1, 2,0.7) #Probabilidad de dos aciertos consecutivos.
+```
+
+```{r}
+# Calculamos la P(X=0) de una Bernoulli(0.7)
+dbinom(0, 1,0.7)
+dbinom(0, 2,0.7) #Probabilidad de dos fracasos seguidos. 
+```
+
+```{r}
+# Calculamos la func. de distribución acumulada de una Bernoulli(0.7)
+pbinom(0, 1,0.7)
+pbinom(1, 1,0.7)
+```
+
+```{r}
+#Función quantil o percentil
+#En q binom el primer parámetro es la probabilidad. Dado un valor numérico, indica qué porcentaje de valores deja por debajo en el ordenamiento probabilístico que genera la distribución. Es la función inversa de la cdf (Probabilidad Acumulada).
+qbinom(0,1,0.7)
+qbinom(0.3,1,0.7)
+qbinom(0.31,1,0.7)
+qbinom(0.50,1,0.7)
+qbinom(1,1,0.7)
+```
+
+```{r}
+# para generar valores
+rbinom(100,1, 0.7)
+```
+
+
+
