@@ -1,0 +1,189 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Distribuciones de probabilidad en R
+Las distribuciones en R tienen las funciones descritas en los apuntes seguidas del nombre en su sintaxis. A cada nombre de función dado por R se le agrega un prefijo:
+
+“d”: para la función de densidad (pdf en variable contínua) ó función de masa de probabilidad (pmf en variable discreta)
+“p”: para la función de distribución acumulada (cdf)
+“q”: para la función de cuantiles (qf)
+“r”: para generar número aleatorios acorde a la ley correspondiente
+Denotaremos las distribuciones por X.
+
+
+BERNUILLI
+Tomalos valores 0 (fracaso) y 1 (éxito). La probabilidad de éxito P(X=1) es igual que el parámetro p de la distribución.
+Se denota como Bernouilli(p)
+
+```{r}
+#Distribución de Bernouilli
+
+# Calculamos la P(X=1) de una Bernoulli(0.7)
+dbinom(1, 1,0.7)  #El segundo parámetro es el número de intentos.
+
+```
+
+```{r}
+# Calculamos la P(X=0) de una Bernoulli(0.7)
+dbinom(0, 1,0.7)
+```
+
+```{r}
+# Calculamos la func. de distribución acumulada de una Bernoulli(0.7)
+pbinom(0, 1,0.7)
+pbinom(1, 1,0.7)
+```
+
+```{r}
+#Función quantil o percentil
+#En q binom el primer parámetro es la probabilidad. Dado un valor numérico, indica qué porcentaje de valores deja por debajo en el ordenamiento probabilístico que genera la distribución. Es la función inversa de la cdf (Probabilidad Acumulada).
+qbinom(0,1,0.7)
+qbinom(0.3,1,0.7)
+qbinom(0.31,1,0.7)
+qbinom(0.50,1,0.7)
+qbinom(1,1,0.7)
+```
+
+```{r}
+# para generar valores
+rbinom(100,1, 0.7)
+```
+
+-----------------------------------------------------------------------------
+Distribución binomial
+Se denota por Binomial(n, p) donde n es el número de experimentos y p la probabilidad de éxito
+
+```{r}
+# x, q: Vector de cuantiles.
+# p: Vector de probabilidades.
+# n: Número de observaciones
+# size: Números de ensayos(debe ser cero o más).
+# prob: Probabilidad de éxito en cada ensayo.
+# log, log.p: Parámetro booleano, si es TRUE, las probabilidades p se ofrecen como log(p).
+# lower.tail: Parámetro booleano, si es TRUE (por defecto), las probabilidades son P[X ≤ x], de lo
+# contrario, P[X > x].
+
+# Calculamos la P(X=3) de una Binomial(10,0.5). Probabilidad de 3 aciertos en 10 experimentos.
+
+dbinom(3, 10 ,0.5)
+
+```
+
+
+```{r}
+# Calculamos la P(X=6) de una Binomial(10,0.5)
+#Importante destacar que esto parece tener una distribución normal. Cuando pasas de 5 aciertos, al ser la probabilidad del 0.5 la probabilidad baja
+dbinom(7, 10, 0.5) #Por lo anterior, la probabilidad de 7 aciertos es la misma que la de 3 aciertos o 7 fallos. 
+```
+
+```{r}
+#Probabilidad de 0,1,2,3.
+dbinom(0:3, 10 ,0.5)
+```
+
+```{r}
+# Calculamos la P(X<=2) de una Binomial(10,0.5)
+sum(dbinom(0:2, 10, 0.5))
+```
+
+“p”: para la función de distribución acumulada (cdf)
+```{r}
+#Lo anterior, coincide con la probabilidad acumulada de dos aciertos en las mismas condiciones. 
+pbinom(2,10,0.5)
+```
+
+```{r}
+#Si quieres calcular lo contrario, es decir, la probabilidad de 3 o mas
+pbinom(2,10,0.5,lower.tail = FALSE)
+```
+
+```{r}
+#Lo mimos que arriba, probabilidad de tener hasta 7 aciertos. 
+pbinom(7,10,0.5)
+```
+
+```{r}
+# Los valores de X que tiene una probabilidad de ocurrir en torno al 90\%. Ver lo de arriba. Si apostamos entre 0 y 7 tenemos un 90% de probabilidades de acertar. 
+qbinom(0.9,10,0.5)
+```
+
+
+```{r}
+#Lo mimos que arriba, pero con un 90%. Necesitamos 8 tiradas. En 10 tiradas hay un 98% de probabilidades de estar entre 0 y 8 aciertos
+pbinom(8,10,0.5)
+qbinom(0.95,10,0.5)
+```
+
+```{r}
+#Podemos obtener varios cuantiles simultáneamente 
+qbinom(c(0.05,0.95),10,0.5)
+```
+
+
+```{r}
+#Si generamos una muestra grande vemos que los valores teóricos y reales se aproximan.
+hist(rbinom(1000,10,0.5))
+hist(rbinom(1000,10,0.1))
+hist(rbinom(1000,10,0.9))
+
+```
+
+El ejemplo anterior, al estar realizado sobre probabilidad 0,5 es simétrico. 
+-------------------------------------------------------------------------------------------------------
+Actividad de refuerzo
+—————–
+Supongamos que la probabilidad de tener una unidad defectuosa en una línea de ensamblaje es de 0.05.
+
+Si el conjunto de unidades terminadas constituye un conjunto de ensayos independientes: ¿cuál es la probabilidad de que entre diez unidades dos se encuentren defectuosas?
+¿y de que a lo sumo dos se encuentren defectuosas?
+¿cual es la probabilidad de que por lo menos una se encuentre defectuosa?
+Se quiere saber una acotación de cuántas unidades defectuosas hay en el 99% de los casos, cuánto es este máximo?
+Si se toman 10000 unidades, cuál es el valor esperado de unidades defectuosas?
+
+```{r}
+#¿cuál es la probabilidad de que entre diez unidades dos se encuentren defectuosas?
+dbinom(2, 10, 0.05)
+```
+
+```{r}
+#Que a lo sumo dos se encuentre defectuosas, como máximo.
+pbinom(2, 10, 0.05)
+```
+```{r}
+#¿cual es la probabilidad de que por lo menos una se encuentre defectuosa?
+pbinom(0, 10, 0.05,lower.tail=FALSE)
+```
+
+```{r}
+# - Se quiere saber una acotación de cuántas unidades defectuosas hay en el 99% de los casos, 
+# cuánto es este máximo?
+qbinom(0.99,10,0.05)
+#Entre 0 y 3
+
+```
+
+```{r}
+#Si se toman 10000 unidades, cuál es el valor esperado de unidades defectuosas?
+10000*0.05
+```
+
+```{r}
+x<-rbinom(100,10000,0.05)
+mean(x)  #vamos a generar 100 experimentos con 10000 .
+hist(x)  # Lo mas habitual es tener en torno a 500 defectuosas
+```
+
+Podemos representar la función de Probabilidad. (PMF) Función de masa de Probabilidad teórica
+```{r}
+plot(dbinom(0:1000, 1000 ,0.05),type="h",xlab="k",ylab="P(X=k)",main="Función de Probabilidad B(1000,0.05)")
+# Como podemos ver, esta distribución teórica se aproxima mucho a la real vista anteriormente con números aleatorios. 
+```
+
+```{r}
+plot(pbinom(0:1000, 1000 ,0.05),type="h",xlab="k",ylab="P(X=k)",main="Función de Probabilidad Acumulada B(1000,0.05)")
+
+#Importante. La probabilidad de que X=k es acumulada en este caso. Es probabilidad de que sea menor o igual que k.
+```
+
