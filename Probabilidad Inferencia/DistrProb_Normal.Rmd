@@ -1,0 +1,88 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Distribución Normal
+Se denota por N($\mu$, $\sigma$) donde μ es la media y σ es la desviación típica (raíz cuadrada de la varianza) de la distribución.
+
+```{r}
+# dnorm(x, mean = 0, sd = 1, log = F); Devuelve resultados de la funci´on de densidad.
+# pnorm(q, mean = 0, sd = 1, lower.tail = T, log.p = F); Devuelve resultados de la funci´on de distribuci´on
+# acumulada.
+# qnorm(p, mean = 0, sd = 1, lower.tail = T, log.p = F); Devuelve resultados de los cuantiles de la
+# Normal.
+# rnorm(n, mean = 0, sd = 1); Devuelve un vector de valores normales aleatorios.
+# Con:
+#   x, q: Vector de cuantiles.
+# p: Vector de probabilidades.
+# n: N´umeros de observaciones.
+# mean: Vector de medias. Por defecto, su valor es 0.
+# sd: Vector de desviaci´on est´andar. Por defecto, su valor es 1.
+# log, log.p: Par´ametro booleano, si es TRUE, las probabilidades p son devueltas como log (p).
+# lower.tail: Par´ametro booleano, si es TRUE (por defecto), las probabilidades son P [X ≤ x], de lo
+# contrario, P [X > x].
+
+# Calcular la P(Z>1) de una N(0,1)
+pnorm(1, mean = 0, sd = 1, lower.tail = F)
+```
+
+```{r}
+# Calcular la P(-2<Z<2) de una N(0,1)
+
+#Calculamos de probabilidad de <2 y le restamos la probabilidad de que sea menor que -2
+pnorm(1.99, mean = 0, sd = 1)-pnorm(-2.01, mean = 0, sd = 1)
+```
+
+```{r}
+# Calcular la P(0<Z<1.96) de una N(0,1)
+pnorm(1.96, mean = 0, sd = 1)-pnorm(0, mean = 0, sd = 1)
+```
+
+```{r}
+# Calcular la P(Z<=z)=0,5793 de una N(0,1)
+qnorm(0.5793,mean = 0, sd = 1)  #Esto indica que hasta 0,17 tenemos el 57% de probabilidad
+```
+
+```{r}
+hist(rnorm(5000,mean=0,sd=1))
+```
+
+```{r}
+# Calcular la P(Z>150) de una Normal de media 125 y la desviaci´on est´andar 50.
+pnorm(150, mean = 125, sd = 50, lower.tail = F)
+```
+
+Actividad de refuerzo
+—————–
+-Genera una secuencia de 50 lanzamientos de moneda (0 ó 1)
+-Una “carrera” es una secuencia de unos seguidos ó de ceros seguidos. ¿Cuál es la carrera más larga en la secuencia generada. Es decir 1 seguidos?
+-Genera una aplicación que calcule este valor dado un vector con 50 ceros y unos.
+-Simula mil experimentos con 50 lanzamientos de moneda cada uno y aproxima el valor de las probabilidades de cada una de las longitudes usando la regla de Laplace. Representa el histograma de las probabilidades. Obtén una aproximación de la media del valor de la carrera más larga en la secuencia.
+
+```{r}
+experimento <- function(n_lanzamientos){
+  carrera <- rbinom(n_lanzamientos,1,0.5)
+  for (i in 1:length(carrera)){
+    if (carrera[i]==1){
+      c = c+1
+    }else{c=0}
+    max_carrera=max(c(c,max_carrera))
+  }
+  return(max_carrera)
+}
+
+simulador <- function(n_exp){
+  resultados<-c()
+    for (i in 1:n_exp){
+      resultados[i]<-experimento(50)
+    }
+  return(resultados)
+  }
+
+exp<-simulador(1000)
+mean(exp)
+hist(exp,breaks = 10,freq=FALSE) #con este ultimo parámetro presenta las probabilidades en lugar de la frecuencia
+```
+
+
