@@ -51,7 +51,12 @@ sol.test
 #Tampoco podemos rechazar a un nivel del 99%.
 ```
 
--------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
 Apartado B
 Dado el dataset survey visto previamente, queremos contrastar si la diferencia del pulso entre hombres y mujeres es diferente o no ¿se puede considerar que el pulso de las mujeres es superior al de los hombres a un nivel de confianza del 90% ?
 
@@ -66,5 +71,200 @@ s_women<-subset(survey,Sex=="Female",select = c("Sex","Pulse"))
 s_man<-subset(survey,Sex=="Male",select = c("Sex","Pulse"))
 head(s_women)
 head(s_man)
+
+```
+
+```{r}
+ggplot(survey, aes(x=Pulse, fill=Sex)) + geom_density(alpha=.3)
+```
+
+La prueba t de Student es uno de los test más utilizados en estadística para comparar las observaciones de 2 grupos. (ver: http://vivaelsoftwarelibre.com/t-de-student-para-comparar-dos-muestras-independientes-en-r/)
+
+El contraste de hipótesis de una t de Student es el que sigue:
+  H0: ambos grupos presentan medias iguales y no tienen diferencias significativas.
+  H1: ambos grupos presentan medias diferentes y tienen diferencias significativas.
+
+Es necesario que ambas muestras se distribuyan siguiendo una distribución normal y sus varianzas sean iguales, para poder aplicar T de Student
+Según la gráfica anterior, a ojo, podemos ver que se aproximan a una normal.
+
+```{r}
+media_w<-mean(s_women$Pulse)
+media_m<-mean(s_man$Pulse)
+desv_w<-sd(s_women$Pulse)
+desv_m<-sd(s_man$Pulse)
+media_w
+media_m
+desv_w
+desv_m
+```
+
+Para contrastar la normalidad, existe el test de Shapriro-Wilk.
+
+Previamente vamos a aplicar la siguiente formula que nos permite realizar una comparación rápida contra una distribucion normal.
+```{r}
+ggqqplot(s_women$Pulse)
+ggqqplot(s_man$Pulse)
+```
+
+```{r}
+shapiro.test(s_women$Pulse)
+shapiro.test(s_man$Pulse)
+```
+Como podemos observar, el p-valor de ambas variablesse sitúa por encima de 0.05. Esto significa que aceptamos la hipótesis nula y consideramos que ambas se distribuyen siguiendo una distribución normal.
+
+La otra premisa para poder utilizar el Test de Shaprio-Wilk es que las desviaciones sean iguales. Esto se llama homoscedasticidad: Se habla de homocedasticidad si el error cometido por el modelo tiene siempre la misma varianza. Para contrastar esto se puede utilizar en test F de Fisher.
+```{r}
+var.test(x=s_women$Pulse,y=s_man$Pulse,alternative='two.sided', conf.level=.95)
+
+```
+Como podemos observar, el p-valor (0.4461) es mayor que 0.05, aceptando la hipótesis nula de igualdad de varianzas.
+
+Por tanto concluimos que podemos utilizar T-Student para comparar dos muestras independientes.
+Perfecto. Una vez llegados a este punto es que nuestros datos son normales y homocedásticos.
+
+```{r}
+t.test(x=s_women$Pulse,y=s_man$Pulse,alternative='greater', conf.level=.95, var.equal = TRUE)
+#Usamos la alternative greter por que estamos tratando de ver si una variable es mayor entre dos muestras -> en función del sexo.
+```
+
+Vemos que es mucho mayor que 0.05 por lo que concluimos que no hay diferencia entre ambas poblaciones. No podemos decir que la variable Pulse difiera significativamente entre hombres y mujeres. 
+
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+
+Apartado C
+Ley de Benford. e ha mandado una factura a la empresa Xdata que parece ser falsa. Esta factura tiene muchos números que no parecen generados de modo natural. Comprobamos si efectivamente la factura está generada artificalmente basándonos en la Ley de Benford https://es.wikipedia.org/wiki/Ley_de_Benford
+
+Esta ley trata sobre la distribución de los primeros dígitos en: - facturas - artículos en revistas - direcciones de calles - precios de acciones - número de habitantes - tasas de mortalidad - longitud de los ríos - Física - constantes matemáticas - números primos
+
+La ley Benford establece que la distribución natural de los primeros dígitos es
+
+  0.301,0.176,0.125,0.097,0.079,0.067,0.058,0.051,0.046. Esto quiere decir que el uno suele ser el primer dígito el 30% de las veces, el dos 0.176... y así consecutivamente.
+  
+Las frecuencias de los primeros dígitos de las facturas de la empresa resultan ser
+
+  7, 13, 12,  9,  9, 13, 11, 10, 16
+¿Son facturas falsas? 1 7 veces, 2 13 veces...
+
+Un video interesante sobre la ley de Bendford -> https://www.youtube.com/watch?v=yyiQ1i3USPo
+Paquete: https://cran.r-project.org/web/packages/benford.analysis/benford.analysis.pdf
+```{r}
+#install.packages("benford.analysis")
+library(benford.analysis)
+```
+```{r}
+#Ejemplo incluido en el paquete
+data(corporate.payment)
+head(corporate.payment)
+```
+
+Then to validade the data against Benford's law you simply use the function benford in the appropriate column:
+```{r}
+bfd.cp <- benford(corporate.payment$Amount,number.of.digits = 1)
+plot(bfd.cp, except=c("mantissa", "chi square", "abs diff", "second order"), multiple = F)
+
+```
+```{r}
+bfd.cp
+```
+
+  7, 13, 12,  9,  9, 13, 11, 10, 16
+```{r}
+#Con el ejemplo del problema
+numeros<-c(1,2,3,4,5,6,7,8,9)
+frecuencias<-c(7,13,12,9,9,13,11,10,16)
+df<- data.frame(numeros,frecuencias)
+df <- expand.dft(df, freq="frecuencias")
+df
+```
+```{r}
+bfd.cp <- benford(df$numeros,number.of.digits = 1)
+plot(bfd.cp, except=c("mantissa", "chi square", "abs diff", "second order"), multiple = F)
+```
+Podemos observar que no cumple la ley a simple vista
+```{r}
+bfd.cp
+```
+
+Otra forma es comparar las dos muestras con un Test Chi Cuadrado de Bondad.
+```{r}
+prob <- c(0.301,0.176,0.125,0.097,0.079,0.067,0.058,0.051,0.046)
+freqs <- c(7, 13, 12,  9,  9, 13, 11, 10, 16)
+
+chisq.test(freqs,p=prob)
+```
+No se pueden considerar iguales las distribuciones, por tanto las facturas no cumplen la Ley Benford y son potencialmente falsas.
+
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+Apartado D
+Carga el dataset
+data("PlantGrowth")
+PlantGrowth
+
+
+
+
+```{r}
+rm(list=ls())
+data("PlantGrowth")
+PlantGrowth
+```
+
+¿ Se puede considerar que con los tres tratamientos las plantas tienen el mismo crecimiento?
+Haz un análisis exploratorio
+Comprueba las asunciones del modelo
+Realiza el one-way ANOVA
+¿ Qué conclusiones se pueden inferir de esta muestra?
+
+
+```{r}
+p <- ggplot(PlantGrowth, aes(group, weight))
+p + geom_boxplot(na.rm=TRUE)
+```
+
+
+Vemos medias bastante diferentes. La desviación parece similar. 
+
+```{r}
+ggplot(PlantGrowth, aes(x=group, fill=weight)) + geom_density(alpha=.3)
+```
+
+```{r}
+hist(PlantGrowth$weight)
+```
+
+```{r}
+attach(PlantGrowth)
+hist(weight[group=="ctrl"])
+hist(weight[group=="trt1"])
+hist(weight[group=="trt2"])
+```
+
+```{r}
+ggqqplot(PlantGrowth$weight)
+```
+
+```{r}
+shapiro.test(PlantGrowth$weight)
+```
+Como podemos observar, el p-valor de ambas variablesse sitúa por encima de 0.05. Esto significa que aceptamos la hipótesis nula y consideramos que ambas se distribuyen siguiendo una distribución normal.
+
+```{r}
+levels(PlantGrowth$group)
+```
+
+TEST Anova
+```{r}
+ #test asumiendo varianzas distintas concluye que no tienen medias iguales por ser p <0.05. Por tanto podemos decir que si influye el tratamiento en el crecimiento.
+oneway.test(PlantGrowth$weight ~ PlantGrowth$group)
 ```
 
