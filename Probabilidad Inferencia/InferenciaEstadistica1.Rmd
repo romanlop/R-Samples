@@ -1,0 +1,115 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+ESTIMACIÓN PUNTUAL
+
+Ejemplo de inferencia estadística: El Caballero de Meré
+
+Para entender en qué consiste la estimación puntual proponemos resolver un ejemplo clásico: la paradoja de Mèré. Aunque no está claro cuanto hay de cierto en la historia, se cree que el Caballero de Mèré era muy aficionado al juego y que, basándose en su propia experiencia, proponía la siguiente apuesta:
+
+  De Mèré gana si al tirar 4 veces un dado sale al menos un 6
+  
+¿Crees que era un juego “rentable” para el Caballero de Mèré?
+¿Cómo estimarías la probabilidad de ganar el juego?
+¿Cómo generarías una muestra?
+¿Cuál es la distribución en el muestreo del estimador?
+¿Sabrías calcular la probabilidad de ganar el juego?
+
+--------------------------------------------------------------------------------------------------------------
+Lo primero que debemos tener en cuenta es que estamos ante un problema de inferencia paramétrica. El parámetro desconocido p no es “la probabilidad de ganar el juego”. La probababilidad se calcula con una formula específica tal y como veremos después.
+
+A priori parece que estamos en una binomial. Un experimento de 4 tiradas, el éxito se da al sacar al menos un 6.
+
+
+Para ello simularemos y crearemos un estimador de ese valor, que será:  p_hat = "número de partidas ganadas" / "número total de partidas"
+```{r}
+n.veces=4
+partidas=1000 #partidas=tama~no muestral
+#Generamos una muestra
+dados=matrix(sample(1:6,n.veces*partidas,T),,nc=n.veces)
+#La probabilidad ronda el 0,5...
+ganadas=sum(apply(dados==6,1,sum)>=1)
+prob.est=ganadas/partidas
+prob.est
+```
+
+
+VER LIBRO EN PDF: nmr13.pdf. Pálgina 77:
+Con datos binomiales, el estimador de la proporción p, pˆ podemos
+verlo como una media muestral... donde Xi = 1 si hay un éxito en la i-ésima prueba de Bernoulli. 
+
+```{r}
+n.veces=4
+partidas=1000 #partidas=tamañono muestral
+n.muestras<-1000  #1000 muestras de 1000 partidas. Es suficientemente grante para tender a una normal.
+prob.est<-numeric()
+for (i in 1:n.muestras){ #100 muestras de 1000 partidas cada una. 
+  dados=matrix(sample(1:6,n.veces*partidas,T),nc=n.veces)
+  ganadas=sum(apply(dados==6,1,sum)>=1)
+  prob.est[i]=ganadas/partidas}
+
+ganadas #anda sobre 510
+partidas #1000 en este caso
+#La media de nuestra muestra sería:
+m_muestra=mean(prob.est) #esto sería p^, también conocido como estimador de la proporción.
+desviacion=sd(prob.est)
+var(prob.est)
+```
+
+¿Cuál es la distribución en el muestreo del estimador?
+https://www.youtube.com/watch?v=NLHbuBDnjlA
+Parece una normal. 
+```{r}
+plot(density(prob.est))
+```
+
+¿Sabrías calcular la probabilidad de ganar el juego?
+vemos que la probabilidad de sacar al menos un '6' es 1−(5/6)4≈0,52
+
+```{r}
+#La probabilidad de sacar al menos un 6 en cuatro tiradas es de:
+p=1-(5/6)^4
+p
+```
+
+Ver apartado 5 del docuimento nmr13.pdf que habla sobre estimación puntual.
+
+5.5 Estimación puntual de la media
+Si pretendemos estimar la media μ de una población su estimador usual es la media muestral, X ̄n. Si tenemos una muestra aleatoria donde cada Xi sigue una distribución normal entonces
+ ̄ σ2
+Xn ∼ N(μ, G^2/n ) (5.1)
+Si las distintas variables Xi que componen la muestra no siguen una distribución muestral entonces asumiendo que tenemos una muestra grande el resultado que damos en 5.1 es aproximadamente cierto. En cualquier caso, la varianza de la media muestral X ̄ n
+  
+```{r}
+#Vamos a pintar la distribución normal teórica que tendría como media La probabilidad de sacar al menos un 6 en cuatro tiradas. P.   
+
+#Por otro lado tendría una desviación típica de 
+
+#En base a la muestra
+x=seq(-0.6,0.6,length=1000)
+plot(density(prob.est))
+lines(x,dnorm(x,mean=m_muestra,sd=desviacion),col=2)
+```
+En este caso conocemos la probabilidad real pintamos la distribución real contra la estimada por simulación.
+
+La estimación de p dada por la muestra es
+
+```{r}
+p_hat <- mean(prob.est)
+p_hat
+```
+ El valor real es
+```{r}
+p
+```
+ 
+
+Para ver si es rentable o no vamos a calcular un intervalo de confianza del 95%. Entonces tenemos un 5% que restamos de cada cola (0,05)/2 = 0,025
+```{r}
+qnorm(0.975,mean = p_hat, sd = desviacion)
+qnorm(0.025,mean = p_hat, sd = desviacion)
+```
+Con estos valores es dificil afirmar que es rentable. no podemos estar seguros si el juego es exitoso pues el intervalo de confianza al 95 % incluye valores por debajo de 0.5
+
+
