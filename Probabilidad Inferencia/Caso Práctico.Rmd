@@ -1,0 +1,70 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Caso Práctico
+
+Apartado A
+Pensemos que tenemos el Coeficiente Intelectual de una muestra de 5 individuos: 110 100 115 105 104
+
+Queremos (caso 1) calcular el intervalo de confianza sobre la media (al 95%) y (caso 2) indicar si tales sujetos han sido extraidos de una poblacion con media 100.
+
+```{r}
+ci <- c(110,100,115,105,104)
+
+#Asumiendo una normal:
+qnorm(0.975,mean = mean(ci), sd = sd(ci))
+qnorm(0.025,mean = mean(ci), sd = sd(ci))
+#Está entre 98 y 118 con una probabilidad del 95%.
+
+
+t.test(ci) # t de student, que supone que la desviación es desconocida. Como puede ser el caso, ya que en realidad no nos han dado este parámetro.
+#Nos da entre 99 y 114
+```
+
+Contraste de hipótesis. Ejemplo -> https://rstudio-pubs-static.s3.amazonaws.com/65042_a1784120e81a430f9de400ed9b899b0b.html
+H0 -> media = 100.
+H1 -> media != 100. 
+```{r}
+mu0=100
+media_muestral=mean(ci)
+sd_muestral=sd(ci)
+```
+
+Bajo estas condiciones (asumiendo población normal, desviación típica poblacional σ desconocida y muestra pequeña de tamaño n=5) utilizamos como estadístico de contraste es
+
+T=X-μ0/(Sx/√n)
+```{r}
+#Es two side por que buscamos una media exacta en la hipótiesis H0.
+sol.test=t.test(ci,mu=100,alternative="two.sided",conf.level=0.95)
+sol.test
+
+#no se puede recharzar que la media sea 100, ya que p-valor es mayor que el nivel de significación 0.05.
+#https://www.youtube.com/watch?v=TPRUG0rebZQ
+```
+
+```{r}
+sol.test=t.test(ci,mu=100,alternative="two.sided",conf.level=0.99)
+sol.test
+
+#Tampoco podemos rechazar a un nivel del 99%.
+```
+
+-------------------------------------------------------------------------
+Apartado B
+Dado el dataset survey visto previamente, queremos contrastar si la diferencia del pulso entre hombres y mujeres es diferente o no ¿se puede considerar que el pulso de las mujeres es superior al de los hombres a un nivel de confianza del 90% ?
+
+```{r}
+data(survey)
+
+```
+
+```{r}
+survey<-x <- na.omit(survey)
+s_women<-subset(survey,Sex=="Female",select = c("Sex","Pulse"))
+s_man<-subset(survey,Sex=="Male",select = c("Sex","Pulse"))
+head(s_women)
+head(s_man)
+```
+

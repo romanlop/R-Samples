@@ -3,5 +3,176 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+Contrastes no parámetricos:
 
+TEST DE INDEPENDENCIA PARA VARIABLES CATEGÓRICAS
+
+Es un test que indica si dos variables extraídas en una muestra pareada (de los mismos experimentos), son independientes o no. Entendemos ser independiente como que el resultado de una variable no influye en el valor de la otra. Como ejemplo: queremos ver si el peso es independiente de la altura en un ser humano.
+
+En este caso vemos si la variable “fumar” es independiente de “hacer ejercicio”, concluimos que son independientes ya que la H1 es ser dependiente y el p-valor es mayor que 0.05.
+```{r}
+library(MASS)  #Es un paquete que contiene gran cantidad de datasets https://cran.r-project.org/web/packages/MASS/MASS.pdf
+head(survey)
+```
+
+```{r}
+#Para los test CHI necesitamos conocer tablas de frecuencias de las variables que nos interesan. Se puede utilizar la función "table()"
+
+tbl<-table(survey$Smoke,survey$Exer)
+tbl
+```
+
+```{r}
+#Test Chi Cuadrado.
+chisq.test(tbl)   #P-valor nos indica que la probabilidad de error al afirmar H0 es del 48% por tanto descartamos H0 y afirmamos H1.
+```
+
+Vamos a ver que ocurre con Sexo y hábito de fumar
+```{r}
+tbl2<-table(survey$Smoke,survey$Sex)
+tbl2
+```
+```{r}
+chisq.test(tbl2)
+#vemos que tampoco está relacionado
+```
+
+Vamos a ver aplauso "que mano está encima" respecto a diestro o zurdo.
+```{r}
+tbl3<-table(survey$W.Hnd,survey$Clap)
+tbl3
+```
+```{r}
+chisq.test(tbl3)
+#Si están relacionadas ambas variables. Vemos un P-valor muy bajo.
+```
+
+Datos de graduados en minessota en 1938. Influye el nivel profesional de los padres con las notas finales?
+```{r}
+data(minn38)
+head(minn38)
+minn38
+```
+```{r}
+#Este data set contiene una columna "f" que contiene la frecuencia de cada combinación de las variables observadas. No nos sirve para aplicar directamente la función table. 
+#install.packages("vcdExtra")
+library(vcdExtra)
+#De este modo expandimos la tabla en función de las frecuencias:
+minn38_expand <- expand.dft(minn38, freq="f")
+minn38_expand
+
+tbl4<-table(minn38_expand$hs,minn38_expand$fol)
+tbl4
+chisq.test(tbl4)
+```
+
+--------------------------------------------------------------------------------------------------------
+Test bondad de ajuste entre histogramas de variables categóricas
+Vemos si se puede considerar que una muestra de una variable categórica se ajusta a una distribución ideal, H1 significa que le ajuste no es adecuado. En el caso que vamos a ver no lo es.
+
+```{r}
+x <- rbinom(500,4,0.7)
+y <- rbinom(500,4,0.6)
+
+par(mfrow=c(1,2))
+barplot(table(x) / sum(table(x)))
+barplot(table(y) / sum(table(y)))
+```
+
+```{r}
+chisq.test(table(x),table(y))
+```
+
+Vamos a tratar de determinar si un conjunto de datos sigue una distribucion normal o no
+```{r}
+#install.packages("ggpubr")
+library("ggpubr")
+```
+```{r}
+# Store the data in the variable my_data
+my_data <-  #The Effect of Vitamin C on Tooth Growth in Guinea Pigs
+head(my_data)
+```
+
+```{r}
+set.seed(1234)
+#mostramos 10 valores aleatorios de la muestra
+dplyr::sample_n(my_data, 10)
+```
+We want to test if the variable len (tooth length) is normally distributed.
+
+
+Si el tamaño de la muestra es lo suficientemente grande (n> 30), podemos ignorar la distribución de los datos y usar pruebas paramétricas.
+
+El teorema del límite central nos dice que no importa qué distribución tengan las cosas, la distribución de muestreo tiende a ser normal si la muestra es lo suficientemente grande (n> 30).
+
+Sin embargo, para ser coherente, la normalidad puede comprobarse mediante inspección visual [gráficos normales (histograma), gráfico Q-Q (gráfico de cuantiles-cuantiles)] o mediante pruebas de significación]
+```{r}
+#Metodo visual
+ggdensity(my_data$len, 
+          main = "Density plot of tooth length",
+          xlab = "Tooth length")
+```
+Q-Q plot: Q-Q plot (or quantile-quantile plot) draws the correlation between a given sample and the normal distribution. A 45-degree reference line is also plotted.
+```{r}
+ggqqplot(my_data$len)
+```
+
+Test de Normalidad
+La inspección visual, descrita en la sección anterior, generalmente no es confiable. Es posible utilizar una prueba de significación que compare la distribución de la muestra con una normal para determinar si los datos muestran o no una desviación grave de la normalidad.
+
+Existen varios métodos para la prueba de normalidad, como la prueba de normalidad de Kolmogorov-Smirnov (K-S) y la prueba de Shapiro-Wilk.
+
+La hipótesis nula de estas pruebas es que "la distribución de la muestra es normal". Si la prueba es significativa, la distribución no es normal.
+
+El método de Shapiro-Wilk es ampliamente recomendado para pruebas de normalidad y proporciona mejor potencia que K-S. Se basa en la correlación entre los datos y los puntajes normales correspondientes.
+```{r}
+shapiro.test(my_data$len)
+```
+
+
+Desde la salida, el valor p> 0.05 implica que la distribución de los datos no es significativamente diferente de la distribución normal. En otras palabras, podemos asumir la normalidad.
+
+-----------------------------------------------------------------------------------------------------------------
+Test de independencia para variables contínuas
+Mann-Whitney aplica a distribuciones contínuas e independientes: https://rstudio-pubs-static.s3.amazonaws.com/218456_818e99f6d4e147a2abb94984d676a95b.html
+
+```{r}
+data("mtcars")
+head(mtcars) #https://www.youtube.com/watch?v=dCG3VAfa11Y
+```
+```{r}
+mtcars$mpg #consumo
+mtcars$am #automático o manual
+```
+
+```{r}
+wilcox.test(mpg ~ am, data=mtcars) #son independientes. Se acepta la hipótesis nula.
+```
+
+```{r}
+kruskal.test(mpg ~ am, data=mtcars)
+#son distribuciones diferentes
+```
+As the p-value is less than the significance level 0.05, we can conclude that there are significant differences between the treatment groups. Por tanto son variables con distribuciones diferentes.
+
+Vemos si ambas categorías son normales, esto es necesario para el test de Mann-Whitney
+```{r}
+par(mfrow=c(1,2))
+qqnorm(mtcars$mpg[mtcars$am==0])
+qqline(mtcars$mpg[mtcars$am==0])
+qqnorm(mtcars$mpg[mtcars$am==1])
+qqline(mtcars$mpg[mtcars$am==1])
+```
+
+-----------------------------------------------
+Wilcoxon Signed-Rank Test
+No requiere normalidad, sirve para determinar si dos muestras de poblaciones dependientes han sido extraídas de la misma población
+```{r}
+head(immer)
+```
+
+```{r}
+wilcox.test(immer$Y1, immer$Y2, paired=TRUE)
+```
 
