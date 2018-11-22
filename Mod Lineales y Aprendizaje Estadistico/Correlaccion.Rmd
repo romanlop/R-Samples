@@ -1,0 +1,110 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Análisis de correlaciones
+Vamos a ver un ejemplo rápido de las funciones que se usan para el análisis de correlaciones y cómo se analizan.
+
+Cargamos el dataset de coches y observamos la correlación de consumo “mpg” respecto a las primeras variables, en corr tenemos el coeficiente de correlación R:
+
+```{r}
+data(mtcars)
+mtcars
+```
+
+```{r}
+install.packages("GGally")  #Es una extensión de ggplot2
+install.packages("Hmisc")
+```
+
+```{r}
+#library(GGally)
+ggpairs(mtcars[,1:5])
+```
+
+Vemos que muchas de las variables están correladas. 
+
+```{r}
+library(Hmisc)
+```
+
+```{r}
+corrs<-rcorr(as.matrix(mtcars))   #devuelve los coeficinetes de correlación y el pvalor del test de pearson 
+corrs$r
+```
+```{r}
+corrs$P
+```
+
+Si queremos estudiar en concreto “mpg” respecto al resto:
+```{r}
+R<- corrs$r
+R[1,]
+```
+```{r}
+P<- corrs$P
+P[1,]
+```
+
+¿Cómo interpretamos estos resultados? https://support.minitab.com/es-mx/minitab/18/help-and-how-to/statistics/basic-statistics/how-to/correlation/interpret-the-results/key-results/
+
+  -Nunca se debe concluir que los cambios en una variable causan cambios en otra basándose solamente en la correlación. Solo los experimentos controlados adecuadamente permiten determinar si una relación es causal.
+  -El coeficiente de correlación de Pearson es muy sensible a valores de datos extremos. Un solo valor que sea muy diferente de los otros valores en un conjunto de datos puede cambiar considerablemente el valor del coeficiente. Usted debe tratar de identificar la causa de cualquier valor extremo. Corrija cualquier error de entrada de datos o de medición. Considere eliminar los valores de datos que estén asociados con eventos anormales y únicos (causas especiales). Luego, repita el análisis.
+  -Un coeficiente de correlación de Pearson bajo no significa que no exista relación entre las variables. Las variables pueden tener una relación no lineal. Para verificar gráficamente relaciones no lineales, cree una Gráfica de dispersión o utilice Gráfica de línea ajustada.
+  
+
+Para determinar si la correlación entre las variables es significativa, compare el valor p con su nivel de significancia. Por lo general, un nivel de significancia (denotado como α o alfa) de 0.05 funciona adecuadamente. Un α de 0.05 indica que el riesgo de concluir que existe una correlación, cuando en realidad no es así, es 5%. El valor p indica si el coeficiente de correlación es significativamente diferente de 0. (Un coeficiente de 0 indica que no existe una relación lineal).
+
+Valor p ≤ α: La correlación es estadísticamente significativa
+Si el valor p es menor que o igual al nivel de significancia, entonces usted puede concluir que la correlación es diferente de 0.
+Valor p > α: La correlación no es estadísticamente significativa
+Si el valor p es mayor que el nivel de significancia, entonces usted no puede concluir que la correlación es diferente de 0.
+
+Por tanto, podemos decir por ejemplo, que la correlación entre mpg y cyl es significativa.
+```{r}
+#Otro modo de hacerlo:
+cor(mtcars$mpg, mtcars)
+```
+
+Coeficiente de determinación lineal R^2: toma valores entre 0 y 1. Representa la proporción de la variabilidad de la variable Y, que queda explicada por la variable X. Si vamos a construir modelos lineales, estamos interesados en que los predictores usados tengan el mayor R^2 con la variable objetivo Y.
+
+Se calcula simplemente elevando al cuadrado la correlación. 
+
+Siguendo con el ejemplo de mpg
+```{r}
+cor(mtcars$mpg, mtcars)^2
+```
+
+Vamos a centrarnos por ejemplo en la relacción entre mpg y alguna de las que tienen un R^2 mas bajo, para ver si podemos explicar su relación a través de una relación no lineal. Por ejemplo vamos a ver 
+
+```{r}
+library(ggplot2)
+ggplot(mtcars,aes(x=mpg,y=hp)) +
+  geom_point(shape=1)
+```
+
+```{r}
+cor(mtcars$mpg, mtcars$hp)
+```
+
+```{r}
+cor(mtcars$mpg, log(mtcars$hp))
+ggplot(mtcars,aes(x=mpg,y=log(hp))) +
+  geom_point(shape=1)
+
+#Vemos que la relacción es mucho mayor si pensamos en una relación logarítmica
+```
+
+```{r}
+cor(mtcars$mpg, exp(mtcars$hp))
+ggplot(mtcars,aes(x=mpg,y=exp(hp))) +
+  geom_point(shape=1)
+```
+```{r}
+cor(mtcars$mpg, sqrt(mtcars$hp))
+ggplot(mtcars,aes(x=mpg,y=sqrt(hp))) +
+  geom_point(shape=1)
+#También se aproxíma bastante bién
+```
+
