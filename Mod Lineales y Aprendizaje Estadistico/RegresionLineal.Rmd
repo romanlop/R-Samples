@@ -1,0 +1,107 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+REGRESION LINEAL SIMPLE
+
+```{r}
+a.docencia <- c(3,1,1,2,5,6,12,7,3,10,6,11,4,4,16,4,5,3,5,2)
+edad <- c(35,27,26,30,33,42,51,35,45,37,43,36,36,56,29,35,37,29,34,29)
+df<-data.frame(edad,a.docencia)
+plot(df)
+```
+
+```{r}
+library(GGally)
+```
+
+```{r}
+ggpairs(df[,1:2])
+```
+
+```{r}
+corrs<-rcorr(as.matrix(df))
+corrs
+```
+Asumiendo un valor de significación de 0.05 vemos que no hay correlación entre ambas variales, ya que P valor es 0.33. Hay un 33% de posibilidades de equivocarnos si afirmamos que sí hay relación. 
+
+Vamos a ajustar un modelo de regresión lineal simple de la forma Y = b0 + b1*X
+donde Y=años de docencia y X=edad
+
+```{r}
+Y<-a.docencia
+X<-edad
+#Función para montaje de modelos lineales
+lm(Y~X) -> mod_reg  #Y~X quiere decir que queremos explicar Y en función de X
+mod_reg
+```
+
+```{r}
+summary(mod_reg)
+```
+
+Intercept es B0, que explica el valor de Y cuando X es 0. 
+X en este caso sería B1.
+Vemos que el error estandard está muy príximo a los coeficientes calculados, lo cual no es buena noticia. El error estándar es significativo. 
+Vemos que los P-Valor o.763 y 0.330, son altos, por lo que la porabilidad de encontra estos valores si aceptamos H0 es alta, por lo que podríamos aceptar H0, es decir que no hay relación.
+
+"H0: There is no relationship between X and Y versus the alternative hypothesis
+Ha : There is some relationship between X and Y . 
+Mathematically, this corresponds to testing
+
+H0 :β1 =0 
+Ha :β1 ̸=0
+"  VER pÄGINA 83 del libro en PDF para entender esto.
+
+El modelo entrenado es muy deficiente porque su R² es muy bajo (un buen modelo debe tener a 1), además ninguno de sus coeficientes es significativamente no nulo.
+
+```{r}
+plot(edad,a.docencia)
+abline(mod_reg)
+```
+
+R^2 también se puede calcular así
+```{r}
+cor(edad,a.docencia)^2
+```
+
+Podemos acceder a los resultados que nos ofrece este modelo de regresión indivudualmente
+```{r}
+mod_reg$coefficients
+```
+
+```{r}
+mod_reg$coefficients[1]
+```
+
+```{r}
+mod_reg$residuals
+```
+
+
+Se puede entrenar un modelo sin el término independiente si en la fórmula restamos 1. Esto tiene sentido si se quiere imponer la restricción en la que cuando X=0, se tiene Y=0
+
+Y=b1*X     b0=0
+```{r}
+
+mod_no_intercept<-lm(Y~X-1)
+summary(mod_no_intercept)
+```
+Vemos que ajusta un poco mejor. R2 es un poco mejor. 
+
+```{r}
+plot(edad,a.docencia)
+abline(mod_reg)
+abline(mod_no_intercept)
+```
+
+
+
+TENGO QUE ARREGLAR ESTO
+```{r}
+library(ggplot2)
+p<-ggplot(df, aes(edad, a.docencia)) + geom_point()
+p + geom_smooth(method = "lm", se = FALSE)
+```
+

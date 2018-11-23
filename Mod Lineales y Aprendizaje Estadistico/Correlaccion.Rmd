@@ -19,7 +19,7 @@ install.packages("Hmisc")
 ```
 
 ```{r}
-#library(GGally)
+library(GGally)
 ggpairs(mtcars[,1:5])
 ```
 
