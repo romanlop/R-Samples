@@ -9,11 +9,13 @@ REGRESION LINEAL SIMPLE
 a.docencia <- c(3,1,1,2,5,6,12,7,3,10,6,11,4,4,16,4,5,3,5,2)
 edad <- c(35,27,26,30,33,42,51,35,45,37,43,36,36,56,29,35,37,29,34,29)
 df<-data.frame(edad,a.docencia)
+df
 plot(df)
 ```
 
 ```{r}
 library(GGally)
+library(Hmisc)
 ```
 
 ```{r}
@@ -96,12 +98,230 @@ abline(mod_reg)
 abline(mod_no_intercept)
 ```
 
-
-
-TENGO QUE ARREGLAR ESTO
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+REGRESIÓN POLINOMIAL
+Este modelo es parabólico ó de grado 2
+Y=b2X^2+b1X+b0
 ```{r}
-library(ggplot2)
-p<-ggplot(df, aes(edad, a.docencia)) + geom_point()
-p + geom_smooth(method = "lm", se = FALSE)
+r2<-lm(a.docencia~edad+I(edad^2))
+summary(r2)
 ```
 
+```{r}
+plot(a.docencia~edad)
+lines(sort(edad), fitted(r2)[order(edad)], col='red') 
+```
+
+Como predecimos nuevos datos
+```{r}
+nuevosdatos <- data.frame(edad=c(30,40,50))
+predict.lm(r2,newdata = nuevosdatos)
+```
+
+
+Se pueden montar también modelos polinómicos de grado 3
+Y=b3X3+b2X^2+b1X+b0
+```{r}
+r3<-lm(a.docencia~edad+I(edad^2)+I(edad^3))
+summary(r3)
+```
+```{r}
+plot(a.docencia~edad)
+lines(sort(edad), fitted(r3)[order(edad)], col='red') 
+```
+
+```{r}
+predict.lm(r3,newdata = nuevosdatos)
+```
+
+
+Conforme aumentamos el grado del polinomio la curva tiene más parámetros y la capacidad de ajustarse a la nube de puntos es mayor.
+```{r}
+r4<-lm(a.docencia~edad+I(edad^2)+I(edad^3)+I(edad^4))
+summary(r4)
+```
+
+```{r}
+plot(a.docencia~edad)
+lines(sort(edad), fitted(r4)[order(edad)], col='red') 
+```
+
+OJO, esto también podríamos tender a sobrestimar. Este modelo podría estar haciendo mucho caso a valores atípicos.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Regresión potencial
+Se realiza cuando cambios porcentuales en la variable X suponen cambios porcentuales en la variable Y, como por ejemplo en modelos económicos de elasticidad, su fórmula es
+Y=aX^b
+```{r}
+#OJO, la función log es (Logarithms and Exponentials), por si lleva a engaño.
+rpot<-lm(log(a.docencia)~log(edad))
+summary(rpot)
+```
+
+```{r}
+plot(a.docencia~edad)
+lines(sort(edad), exp(fitted(rpot)[order(edad)]), col='red') 
+```
+
+```{r}
+nuevosdatos <- data.frame(edad=c(30,40,50))
+predict.lm(rpot,newdata = nuevosdatos)
+exp(predict.lm(rpot,newdata = nuevosdatos))  #Ajustamos la predicción con la función exponencial. El modelo te entrena para saber que valores de Y tenemos que pasarle a la función exponencial. La función predict-lm, es genérica. Por tanto tenemos que asjutarla en función del modelo que estamos usando.
+```
+
+```{r}
+#La función exponencial es de la forma e^x, donde e es el número de euler. 
+num_e<-exp(1)
+#para x=30, el modelo nos devuelve el valor de Y 1.170792. Si lo ajustamos con la función exponencial
+exp(1.170792)
+#Es decir, la función de predicción no devuelve el valor calculado. Devuelve el valor al cual debemos aplicar la función correspondiente. Por tanto a veces tienes que ajustar los datos.
+```
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Regresión exponencial
+Se usa si variaciones lineales de X suponen variaciones porcentuales de Y.
+Y=exp(a+bX)
+```{r}
+A <- structure(list(Time = c(0, 1, 2, 4, 6, 8, 9, 10, 11, 12, 13, 
+14, 15, 16, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30), 
+Counts = c(126.6, 101.8, 71.6, 101.6, 68.1, 62.9, 45.5, 41.9, 
+46.3, 34.1, 38.2, 41.7, 24.7, 41.5, 36.6, 19.6, 
+22.8, 29.6, 23.5, 15.3, 13.4, 26.8, 9.8, 18.8, 25.9, 19.3)), .Names = c("Time", "Counts"), row.names = c(1L, 2L,
+3L, 5L, 7L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, 16L, 17L, 19L, 20L, 21L, 22L, 23L, 25L, 26L, 27L, 28L, 29L, 30L,
+31L), class = "data.frame")
+```
+
+```{r}
+attach(A)
+names(A)
+
+```
+```{r}
+exponential.model <- lm(log(Counts)~ Time)
+summary(exponential.model)
+```
+This model is pretty good, though it explains about 81% of the variance by comparison with the 89% explained by the quadratic model. Let’s plot it on a grid of time values from 0 to 30 in intervals of 0.1 seconds.
+
+```{r}
+timevalues <- seq(0, 30, 0.1)
+Counts.exponential2 <- exp(predict(exponential.model,list(Time=timevalues)))
+Counts.exponential2
+```
+
+```{r}
+plot(Time, Counts,pch=16)
+lines(timevalues, Counts.exponential2,lwd=2, col = "red", xlab = "Time (s)", ylab = "Counts")
+```
+
+
+Tenga en cuenta que utilizamos la exponencial de los valores predichos en la segunda línea de sintaxis de arriba.
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+REGRESIÓN LOGARITMICA
+Se usa si variaciones porcentuales de X incurren en variaciones lineales de Y
+Y=a+blog(x)
+```{r}
+lm(a.docencia~log(edad))->rlog
+summary(rlog)
+```
+```{r}
+plot(a.docencia~edad)
+lines(sort(edad), fitted(rlog)[order(edad)], col='red') 
+```
+
+```{r}
+predict.lm(rlog,newdata = nuevosdatos)
+```
+
+------------------------------------------------------------------------------------------------------------------------------
+Regresión hiperbólica
+Se usa cuando las relación entre las variables es inversamente proporcional
+Y=a+b/x
+```{r}
+lm(a.docencia~I(1/edad))->rhiper
+summary(rhiper)
+```
+
+```{r}
+plot(a.docencia~edad)
+lines(sort(edad), fitted(rhiper)[order(edad)], col='red') 
+```
+
+```{r}
+predict.lm(rhiper,newdata = nuevosdatos)
+```
+
+Regresión doble inversa
+1Y=a+bx
+
+```{r}
+lm(I(1/a.docencia)~I(1/edad)) -> rdobleinver
+summary(rdobleinver)
+```
+
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+Toma el .csv lamado actreg.csv y ejecuta las regresiones distintas pintando. ¿Cuál se ajusta mejor? ¿Cuál tiene mejor R^2 ajustado?
+
+```{r}
+set.seed(0)
+x <- runif(100,1,50)
+y <- 10+log(3*x)+rnorm(100,sd = 0.4)
+dat <- data.frame(x=x,y=y)
+
+
+```
+
+```{r}
+p = ggplot(dat,aes(x,y))
+```
+
+```{r}
+p + geom_point() 
+```
+
+```{r}
+X<-dat$x
+Y<-dat$y
+lineal<-lm(Y~X)
+summary(lineal)
+```
+
+```{r}
+plot(Y~X)
+lines(sort(X), fitted(lineal)[order(X)], col='red') 
+```
+
+parabólico
+Y=aX2+bX+c
+```{r}
+cuad<-lm(Y~X+I(X^2))
+summary(cuad)
+```
+```{r}
+plot(Y~X)
+lines(sort(X), fitted(cuad)[order(X)], col='red') 
+```
+
+Vemos que el R2 es mejor este que la anterior. 
+
+
+logaritmica
+```{r}
+lrlog<-lm(Y~log(X))
+summary(lrlog)
+```
+
+```{r}
+plot(Y~X)
+lines(sort(X), fitted(lrlog)[order(X)], col='red') 
+```
+VEMOS QUE ESTA ES LA QUE MEJOR AJUSTA
