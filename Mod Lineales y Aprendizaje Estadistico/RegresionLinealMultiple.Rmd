@@ -1,0 +1,234 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Regresión lineal múltiple
+Tomamos un dataset de tasas de ahorro en países
+
+```{r}
+install.packages("faraway")
+
+```
+
+```{r}
+library(faraway)
+data(savings)
+help(savings)
+attach(savings) #The database is attached to the R search path. This means that the database is searched by R when evaluating a variable, so objects in the database can be accessed by simply giving their names.
+head(savings)
+```
+
+```{r}
+#Gracias a attach podemos hacer por ejemplo esto, acceder directamente a una de las columnas.
+dpi
+```
+
+```{r}
+savings
+```
+
+```{r}
+savings[order(dpi),] 
+```
+
+Creamos un modelo de la tasa de ahorro sobre algunas variables, se observa que las variables significativas están marcadas con estrellas y tienen un p-valor del contraste t-student bajo.
+
+```{r}
+savings.lm <- lm(sr ~ pop15 + pop75 + dpi + ddpi)
+#Otra forma de hacerlo es lm(sr ~ .,savings)
+summary(savings.lm)
+```
+Sólo pop15 y ddpi parecen variables significativamente explicativas, así como el intercept term, vemos los valores
+
+```{r}
+coefficients(savings.lm)
+```
+
+Cuando estamos ante un modelo que usa múltiples variables, nos preguntamos si se puede prescindir de parte de estas, seleccionando sólo los predictores relevantes
+
+¿ Se puede prescindir de un conjunto de variables?, ¿en este caso de pop75 y dpi?
+
+Creamos dos modelos anidados y realizamos un ANOVA entre los mismos que nos dice si incluir las variables pop75 y dpi genera un modelo mejor ó no
+
+```{r}
+savings.lm.1 <- lm(sr ~ pop15 + pop75 + dpi + ddpi, savings)
+savings.lm.2 <- lm(sr ~ pop15 + ddpi, savings)
+summary(savings.lm.1)
+summary(savings.lm.2)
+```
+El anova realiza el contraste
+
+H0: beta_pop75 = beta_dpi = 0
+H1: beta_pop75 != 0 ó beta_dpi != 0
+Esto equivale a considerar como hipótesis alternativa que alguno de los coeficientes sea no nulo.
+
+```{r}
+anova(savings.lm.1,savings.lm.2)
+```
+El p-valor es >0.05, por lo tanto usaríamos por tanto, el modelo simplificado. Hay que tener en cuenta que H0 es que los beta de estas dos variables son = 0. por tanto 0.19 cae dentro del área de aceptación de H0.
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+Ejemplo de análisis de regresión múltiplie completo
+El banco de datos contiene información sobre recién nacidos y sus madres en un total de 1236 observaciones. Determinar para cada uno de los predictores si podemos considerar que el correspondiente coeficiente es nulo.
+
+Vamos a cargarlo y a hacer preprocesamiento y un modelo lineal múltiple
+```{r}
+install.packages("UsingR")
+```
+```{r}
+library("UsingR")
+```
+
+```{r}
+data("babies")
+attach(babies)
+babies
+```
+
+```{r}
+apply(is.na(babies),2,sum) #comprobamos que no hay valores nulos.
+```
+
+```{r}
+str(babies)
+```
+Vemos la tabla
+```{r}
+help(babies)
+head(babies,30)
+```
+
+```{r}
+babies$wt[wt == 999]  #segun el data set wt=999 son valores desconocidos para esta variable, pero en realidad no hay ninguno
+```
+
+```{r}
+babies$sex[sex == 9] <- NA
+babies$wt[wt == 999] <- NA
+babies$parity[parity == 99] <- NA
+babies$race[race == 99] <- NA
+babies$age[age == 99] <- NA
+babies$ed[ed == 9] <- NA
+babies$ht[ht == 99] <- NA
+babies$wt1[wt1 == 999] <- NA
+babies$smoke[smoke == 9] <- NA
+babies$time[time == 99] <- NA
+babies$time[time == 98] <- NA
+number[number == 98 | number == 99] <- NA
+```
+
+```{r}
+apply(is.na(babies),2,sum) / nrow(babies)*100
+```
+
+```{r}
+unique(outcome)
+babies$outcome[wt !=0]
+```
+
+```{r}
+unique(sex) #son todo niños
+unique(pluralty) #son todo fetos únicos.
+unique(parity) 
+unique(marital) 
+```
+Eliminamos columnas constantes al ser inútiles como predictores
+```{r}
+detach(babies)
+babies <- subset(babies,select=-c(sex,pluralty,outcome))
+attach(babies)
+```
+
+Editamos como factores columnas que son categóricas
+```{r}
+fact.cols <- c("race","ed","drace","dage","ded","marital","smoke","time","number")
+babies[fact.cols] <- lapply(babies[fact.cols], factor)
+str(babies)
+```
+
+```{r}
+apply(is.na(babies),2,sum)
+```
+
+Antes de ajustar un modelo lineal hacemos imputación de valores faltantes usando el paquete mis sForest explicado en https://stat.ethz.ch/education/semesters/ss2012/ams/paper/missForest_1.2.pdf
+
+Aquí un tutorial con 5 paquetes para rellenar valores faltantes de cara a hacer regresión: https://www.analyticsvidhya.com/blog/2016/03/tutorial-powerful-packages-imputing-missing-values/
+
+```{r}
+#install.packages("missForest")
+library(missForest)
+#How does it work ? In simple words, it builds a random forest model for each variable. Then it uses the model to predict missing values in the variable with the help of observed values.
+```
+```{r}
+babies.imp <- missForest(babies,maxiter = 5,ntree = 500,variablewise = T)
+```
+
+```{r}
+babies.imp$OOBerror
+```
+
+```{r}
+apply(babies,2,var,na.rm=TRUE)
+```
+
+```{r}
+apply(babies,2,var,na.rm=TRUE)
+```
+
+
+```{r}
+babies <- babies.imp$ximp
+```
+
+
+Supongamos que pretendemos predecir el peso del niño utilizando como variables predictoras las variables gestation, ht, age, wt1 que corresponden con el tiempo de gestación, la altura de la madre, la edad de la madre, el peso de la madre antes del nacimiento. Realizamos:
+
+-Realizar el correspondiente ajuste.
+-Evaluar el coeficiente de determinación.
+-Contrastar la hipótesis de que todos los coeficientes excepto la constante son nulos.
+-Determinar para cada uno de los predictores si podemos considerar que el correspondiente coeficiente es nulo.
+```{r}
+mod <- lm(wt~ht+gestation+age+wt1,data=babies)
+summary(mod)
+```
+El coeficiente de ajuste es muy bajo.
+los coeficientes influyentes son ht, wt1, intercept y gestation (gestation en menor medida)
+```{r}
+anova(lm(wt~1,data=babies),lm(wt~ht+gestation+age+wt1,data=babies))
+```
+Contrastar la hipótesis de que todos los coeficientes excepto la constante son nulos. El P valor es muy bajo, por tanto lo que aceptamos es H1, con coeficientes distintos de 0. 
+
+```{r}
+mod2 <- lm(wt~ht+wt1+gestation,data=babies)
+summary(mod2)
+```
+
+
+
+```{r}
+babies$gestation
+```
+
+```{r}
+mod2$coefficients
+```
+
+
+VER esto: https://stackoverflow.com/questions/27464893/getting-warning-newdata-had-1-row-but-variables-found-have-32-rows-on-pred
+```{r}
+ht <- c(60,64,68,71)
+wt1 <- c(135.8040,156.0000,156.0000,163.0000)
+gestation <- c(286,304,266,281)
+datos<-data.frame(mother_ht,mother_wt1,mother_gestation)
+predict.lm(mod2,newdata=datos)
+```
+
+```{r}
+babies$wt
+```
+
