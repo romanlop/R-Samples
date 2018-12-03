@@ -1,0 +1,242 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Descripción de los datos:
+
+Response (y): Performance IQ scores (PIQ) from the revised Wechsler Adult Intelligence Scale. This variable served as the investigator’s measure of the individual’s intelligence.
+Potential predictor (x1): Brain size based on the count obtained from MRI scans (given as count/10,000).
+Potential predictor (x2): Height in inches.
+Potential predictor (x3): Weight in pounds.
+
+
+Apartado A
+¿ Depende el coeficiente intelectual de medidas físicas ? Carga “iqphys.csv” y haz una regresión lineal múltiple:
+
+  -¿ Cuál de los predictores explica algo la variabilidad del coeficiente intelctual?
+  -¿ Cuál es el efecto del tamaño cerebral, después de tomar en cuenta el peso y la altura?
+  -Da un intervalo de confianza para los coeficientes
+  -¿ Cuál es el intervalo de confianza de IQ para los valores de los predictores: 95,70,180 ?
+  -Siguen los residuos una distribución normal? Haz las representaciones del histograma y de de la gráfica cuantil-cuantil convenientes.
+
+```{r}
+rm(list=ls())
+```
+
+
+```{r}
+CI <- read.csv(file="datos/CI.csv", header=TRUE, sep=",")
+attach(CI)
+```
+
+Vamos a comprobar si hay valores nulos
+```{r}
+apply(is.na(CI),2,sum)
+```
+
+
+Vamos a pintar los datos para ver si hay algo anómalo
+
+```{r}
+hist(CI$PIQ)
+mean(CI$PIQ)
+sd(CI$PIQ)
+```
+
+```{r}
+hist(CI$Brain)
+mean(CI$Brain)
+sd(CI$Brain)
+```
+Vemos que no hay datos anómalos
+
+```{r}
+head(CI)
+```
+
+
+Hacemos una regresión lineal múltiple para ver si podemos explicar el Coeficiente Intelectual
+```{r}
+modelo <- lm(PIQ~.,data=CI)
+summary(modelo)
+```
+¿ Cuál de los predictores explica algo la variabilidad del coeficiente intelctual?
+Parece que el tamaño del cerebro y en menor medida la estatura. En todo caso viendo el R^2 vemos que el modelo es bastante pobre.
+De hecho el error standard en residuos es de 19.79 y la desviación típica de la variable PIQ es 22.59, lo que significa que hay una variación muy fuerte en los residuos respecto a la variable objetivo.
+
+Sólo parece significativamente influyente el tamaño cerebral y un poco la altura sólo el 29% de la variabilidad del coeficiente intelectual queda explicada a través de las variables predictoras. -> Ver la R^2.
+
+¿ Cuál es el efecto del tamaño cerebral, después de tomar en cuenta el peso y la altura?
+Vemos que el tamaño del cerebro puede tener una influencia positiva en el CI
+```{r}
+res <- cor(CI)
+res
+```
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+b <- ggplot(CI, aes(x = Brain, y = PIQ))
+# Scatter plot with regression line
+b + geom_point()+
+  geom_smooth(method = "lm") 
+```
+
+Vamos a tratar de mejorar un poco el modelo.
+```{r}
+step <- stepAIC(lm(PIQ~1,data=CI),scope = 
+                  PIQ~Brain+Height+Weight, direction="forward")
+```
+
+```{r}
+step$anova # resultados
+```
+
+```{r}
+modelo_2 <- lm(PIQ ~ Brain + Height,data= CI)
+summary(modelo_2)
+```
+
+Comparamos los dos modelos para ver con cual nos quedamos
+```{r}
+AIC(modelo)
+AIC(modelo_2)
+```
+
+```{r}
+anova(modelo,modelo_2)
+```
+
+Nos quedamos con el modelo que no incorpora el peso por tener un AIC menor. 
+El p-valor es enorme, nos quedamos con el modelo simplificado
+
+######################################################################
+######################################################################
+######################################################################
+Da un intervalo de confianza para los coeficientes
+```{r}
+confint(modelo_2)
+```
+
+```{r}
+Brain<-95
+Height<-70
+Weight<-180
+datos_test<-data.frame(Brain,Height,Weight)
+predict.lm(modelo_2,newdata=datos_test,interval="predict",level = 0.95)
+predict.lm(modelo_2,newdata=datos_test,interval="predict",level = 0.99)
+```
+Observamos que el tamaño del intervalo de confianza es muy amplio. Esto es porque hay pocas muestras y el predictor es malo.
+
+Pintamos los residuos para confirmar que el predictor está bien diseñado:
+
+Siguen los residuos una distribución normal? Haz las representaciones del histograma y de de la gráfica cuantil-cuantil convenientes.
+```{r}
+hist(modelo_2$residuals)
+```
+
+```{r}
+qqnorm(modelo_2$residuals)
+qqline(modelo_2$residuals)
+```
+
+```{r}
+plot(modelo_2)
+```
+
+```{r}
+shapiro.test(modelo_2$residuals)
+```
+
+Por los resultados del test de Shapiro, podemos considerar los residuos normales
+
+
+################################################################
+################################################################
+################################################################
+APARTADO B
+
+Carga el dataset prostate en el paquete ElemStatLearn
+Elimina la columna train ¿Cuál es el mejor modelo que explica la variable lpsa ?
+Da un intervalo de confianza para los coeficientes
+```{r}
+#install.packages("ElemStatLearn")
+library(ElemStatLearn)
+data("prostate")
+help(prostate)
+head(prostate)
+```
+
+```{r}
+attach(prostate)
+prostate$train <- NULL
+
+```
+
+
+```{r}
+apply(is.na(CI),2,sum)
+```
+
+```{r}
+prostate
+```
+
+```{r}
+prostate$gleason
+```
+
+
+Cambiamos las variables que parecen factores
+```{r}
+fact.cols <- c("age","svi","gleason","pgg45")
+prostate[fact.cols] <- lapply(prostate[fact.cols], factor)
+str(prostate)
+```
+
+
+
+```{r}
+step <- stepAIC(lm(lpsa~1,data=prostate),scope = 
+                  lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, direction="forward")
+```
+```{r}
+step$anova
+```
+
+```{r}
+summary(step)
+```
+
+```{r}
+modelo<-lm(lpsa~lcavol+lweight+svi+lbph,data=prostate)
+summary(modelo)
+```
+
+```{r}
+plot(modelo_2)
+```
+
+
+```{r}
+confint(modelo)
+```
+
+
+```{r}
+step2 <- stepAIC(lm(lpsa~1,data=prostate),scope = 
+                  lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, direction="both")
+```
+
+```{r}
+step2$anova
+```
+
+```{r}
+anova(lm(formula = lpsa ~ lcavol + lweight + svi + lbph, data = prostate),
+      lm(formula = lpsa ~ lcavol + lweight + svi + lbph + age, data = prostate))
+```
+El anova no justifica la inclusión de la variable Age, sin embargo reduce el AIC

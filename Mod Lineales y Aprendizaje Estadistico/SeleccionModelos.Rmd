@@ -1,0 +1,144 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Selección de modelos
+Vemos criterios de comparación de modelos, primero cargamos datos:
+```{r}
+library(MASS)
+data(Boston)
+head(Boston)
+```
+
+Valor medio de viviendas ocupadas en miles.
+```{r}
+sd(Boston$medv)
+mean(Boston$medv)
+hist(Boston$medv,20)
+```
+
+Hay una anomalía en los datos en el valor 50, quitamos estas casas. 
+```{r}
+Boston_arrange<-subset(Boston, medv < 50)
+hist(Boston_arrange$medv,20)
+```
+
+Generamos un modelo sobre todas las variables. Con confint sacamos intervalos de confianza para los coeficientes del modelo
+
+```{r}
+mod <- lm(medv~.,data=Boston_arrange)
+summary(mod)
+```
+
+```{r}
+confint(mod)
+```
+
+```{r}
+mod_red <- lm(medv~.-age-indus-chas,data=Boston_arrange)
+summary(mod_red)
+```
+
+Calculamos la matriz de correlaciones y la fila de correlaciones respecto a la variable objetivo “medv”
+```{r}
+M <- cor(Boston_arrange)
+M["medv",]
+```
+
+Usamos AIC para comparar ambos modelos, es ligeramente mejor el modelo que tiene todas las variables
+```{r}
+AIC(mod)
+AIC(mod_red)
+```
+
+Comprobamos con BIC, éste dictamina que es mejor modelo el que no tiene las variables “age” e “indus”. Los criterios no tienen por qué coincidir
+```{r}
+BIC(mod)
+BIC(mod_red)
+```
+
+
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+Funciones step de selección de variables
+Se puede automatizar la selección de modelos con la función step. Esta función prueba todos los modelos con distintas variables anidándose aumentando variables ó reduciéndolas. Sigue el proceso en cascada hasta que el criterio deja de aumentar.
+
+Selección por pasos del mejor modelo en función de los atributos elegidos usando el criterio AIC y añadiendo cada vez más variables:
+(ver página 78 del libro en PDF)
+
+```{r}
+step <- stepAIC(lm(medv~1,data=Boston_arrange),scope = 
+                  medv~crim+zn+indus+chas+nox+rm+age+dis+tax+ptratio+black+lstat, direction="forward")
+```
+```{r}
+step
+```
+
+```{r}
+step$anova # resultados
+```
+
+Vemos que el mejor modelo es el que contempla todas la variables salvo "Chas".
+
+```{r}
+AIC(step)
+```
+
+
+Otro modo de escribirlo estableciendo explícitamente el modelo mayor y el menor. También se puede indicar la dirección de evolución con “forward”, “backward” y “both”
+
+```{r}
+fit1 <- lm(medv~crim+zn+indus+chas+nox+rm+age+dis+tax+ptratio+black+lstat,data=Boston_arrange)
+fit0 <- lm(medv~1,data=Boston_arrange)
+stepAIC(fit1,direction="backward")
+```
+```{r}
+step$anova # resultados
+```
+```{r}
+AIC(step)
+```
+
+Ahora probamos con direction="both"
+```{r}
+stepAIC(fit0,direction="both",scope=list(upper=fit1,lower=fit0))
+```
+```{r}
+step$anova # resultados
+AIC(step)
+```
+
+Los tres resultados anteriores dan como mejor modelo el mismo.
+
+Verificamos el ajuste de este modelo, pintando sus residuos y verificando que sean normales, viendo su AIC. En este caso los residuos tienen un fuerte sesgo hacia la derecha que indica que el modelo no está siendo muy adecuado.
+
+
+```{r}
+mod <- lm(medv ~ lstat + rm + ptratio + tax + black + dis + nox + age +  zn + crim + indus,data= Boston_arrange)
+
+mod
+
+extractAIC(mod,scale=0)
+```
+
+Pintamos el RSS -> Los residuos.
+```{r}
+hist(mod$residuals)
+```
+
+Deberían seguir una distribución normal para consideralos como adecuados.
+```{r}
+qqnorm(mod$residuals)
+qqline(mod$residuals)
+```
+
+```{r}
+shapiro.test(mod$residuals) #hay un fuerte sesgo hacia la derecha y  no es normal la distribución
+```
+
+```{r}
+summary(mod)
+```
+
