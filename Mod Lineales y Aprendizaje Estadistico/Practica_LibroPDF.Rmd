@@ -1,0 +1,196 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Practica Libro PDF. Ver punto 3.6.
+
+```{r}
+rm(list=ls())
+```
+
+
+```{r}
+library(MASS) #contiene un conjunto de datasets de la leche.
+#install.packages("ISLR")
+library(ISLR)
+```
+
+We will seek to predict medv using 13 predictors such as rm (average number of rooms per house), age (average age of houses), and lstat (percent of households with low socioeconomic status).
+
+```{r}
+data("Boston")
+attach(Boston)
+head(Boston)
+```
+
+```{r}
+names(Boston)
+```
+
+Vamos a realizar inicialmente una regresión linal simple.
+```{r}
+mod <- lm(medv~lstat) 
+summary(mod)
+```
+
+```{r}
+names(mod)
+```
+```{r}
+coef(mod)
+```
+
+Para obtener los intervalos de confianza para los coeficientes:
+```{r}
+confint(mod)
+```
+
+Hacer una predicción sobre el modelo. Por defecto lo hace a un intervalo del 95% pero se puede especificar otro
+```{r}
+predict.lm(mod,data.frame(lstat=(c(5,10,15))), interval ="prediction")
+ 
+```
+
+```{r}
+predict.lm(mod,data.frame(lstat=(c(5,10,15))), interval ="prediction", level=0.90)
+```
+
+```{r}
+plot(lstat ,medv)
+abline(mod,lwd=3, col="red")
+```
+
+Existe alguna evidencia de no linealidad en la relación entre lstat y medv. Exploraremos este problema más adelante en este laboratorio.
+
+```{r}
+plot(lstat,medv,pch="+")
+abline(34,-0.95)
+```
+
+Graficos importantes para entender si el modelo se ajusta ok.
+```{r}
+par(mfrow=c(2,2)) 
+plot(mod)
+```
+
+Vemos varias cosas interesantes.
+```{r}
+plot(predict(mod), residuals(mod))
+plot(predict(mod), rstudent(mod))
+```
+
+Sobre la base de las parcelas residuales, hay alguna evidencia de no linealidad ya que vemos algún patrón en los residuos. 
+
+Podemos ver también una estadistica de puntos "Leverage"
+```{r}
+plot(hatvalues (mod))
+which.max(hatvalues (mod))
+```
+
+Si hubies algún punto que estuviese fastiadiando la muestra por estar fuera del rango que representamos en X, debería mostrarse el punto indicando su valor X correspondiente. En este caso no detectamos High Leverage Points. Puntos de alta influencia.  
+
+
+VAMOS A TRATAR DE AJUSTARLA UN POCO MEJOR, por ejemplo utilizando una función cuadrática
+
+```{r}
+lstat_quad<-lstat^2
+mod_quad <- lm(medv~lstat+lstat_quad) 
+summary(mod_quad)
+```
+
+```{r}
+sort(lstat)
+max(lstat)
+min(lstat)
+```
+
+
+
+vamos a generar valores con nuestro nuevo modelo para pintar la gráfica y ver que tal se ajusta.
+```{r}
+lstat_values <- seq(1.80, 38.00, 0.10)
+```
+
+
+```{r}
+predictedcounts <- predict(mod_quad,list(lstat=lstat_values, lstat_quad=lstat_values^2))
+```
+
+```{r}
+plot(lstat ,medv)
+lines(lstat_values, predictedcounts, col = "blue", lwd = 3)
+```
+
+#########################################################################################################
+#########################################################################################################
+#########################################################################################################
+#########################################################################################################
+
+#MULTIPLES LINEAR REGRESSION
+```{r}
+lm.fit=lm(medv~lstat+age,data=Boston)
+summary(lm.fit)
+```
+
+Podemos hacerlo con todas las variables
+```{r}
+lm.fit=lm(medv~.,data=Boston)
+summary(lm.fit)
+```
+
+```{r}
+names(lm.fit)
+```
+
+Transformaciones no lineales
+we can create a predictor X2
+```{r}
+lm.fit2=lm(medv~lstat+I(lstat^2))
+summary(lm.fit2)
+```
+
+Vamos a usar una Anova para ver cual se ajusta mejor, el lineal o el X^2
+```{r}
+lm.fit=lm(medv~lstat)
+anova(lm.fit ,lm.fit2)
+```
+The anova() function performs a hypothesis test comparing the two models. The null hypothesis is that the two models fit the data equally well, and the alternative hypothesis is that the full model is superior. Here the F-statistic is 135 and the associated p-value is virtually zero. This provides very clear evidence that the model containing the predictors lstat and lstat2 is far superior to the model that only contains the predictor lstat. This is not surprising, since earlier we saw evidence for non-linearity in the relationship between medv and lstat.
+
+```{r}
+par(mfrow=c(2,2))  
+plot(lm.fit2)
+```
+
+then we see that when the lstat2 term is included in the model, there is little discernible pattern in the residuals.
+
+Vamos a crear una aproximación cúbiva:
+In order to create a cubic fit, we can include a predictor of the form I(X^3). However, this approach can start to get cumbersome for higher- order polynomials. A better approach involves using the poly() function to create the polynomial within lm(). For example, the following command produces a fifth-order polynomial fit:
+```{r}
+lm.fit5=lm(medv~poly(lstat ,5))
+summary(lm.fit5)
+```
+
+This suggests that including additional polynomial terms, up to fifth order, leads to an improvement in the model fit! However, further investigation of the data reveals that no polynomial terms beyond fifth order have signifi- cant p-values in a regression fit.
+
+##############################################################################################################################
+##############################################################################################################################
+##############################################################################################################################
+```{r}
+data(Carseats)
+head(Carseats)
+attach(Carseats)
+```
+
+The Carseats data includes qualitative predictors such as Shelveloc, an in- dicator of the quality of the shelving location—that is, the space within a store in which the car seat is displayed—at each location. The pre- dictor Shelveloc takes on three possible values, Bad, Medium, and Good.
+
+Given a qualitative variable such as Shelveloc, R generates dummy variables automatically. Below we fit a multiple regression model that includes some interaction terms.
+```{r}
+lm.fit=lm(Sales~.+Income:Advertising+Price:Age,data=Carseats)
+summary(lm.fit)
+```
+
+```{r}
+contrasts(ShelveLoc)
+```
+
