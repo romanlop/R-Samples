@@ -1,0 +1,202 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Problema de clasificación
+Carga el dataset de cáncer de mama en Wisconsin en UCI: . Divídelo en train - 400 filas y test - fila 401 en adelante.
+Nota: Si la url no está disponible, cargar el archivo wisconsin_breast.csv
+
+```{r}
+rm(list=ls())
+```
+
+```{r}
+breast_data <- read.csv(file="datos/wisconsin_breast.csv", header=TRUE, sep=",")
+attach(breast_data)
+breast_data
+```
+
+```{r}
+x <- breast_data[,3:32]
+dim(x)
+x
+```
+
+#convertimos la variable objetivo en numérico para poder tratarla. Creo que se refiere a tumor benigno y maligno.
+```{r}
+y <- as.numeric(breast_data$V2) -1
+head(y,20)
+```
+
+```{r}
+head(breast_data$V2, 20)
+```
+
+#creamos los datasets de entrenamiento y test
+```{r}
+X_train <- x[1:400,]
+y_train <- y[1:400]
+X_test <- x[401:569,]
+y_test <- y[401:569]
+```
+
+```{r}
+head(X_train,50)
+head(y_train,50)
+```
+
+
+
+################################################################################################################################################
+SE PIDE:
+Haz una regresión logística haciendo selección de modelo según AIC y dando la tabla de confusión y métricas en el test:
+
+¿ Qué variables son más influyentes para tener cáncer de mama?
+Selecciona el modelo usando StepAIC y haz la predicción sobre el test set dando la matriz de confusión.
+Aplica la regresión de Ridge y de Lasso, da las matrices de confusión y las métricas ¿con cuál de las tres opciones obtienes mejores resultados?
+
+Se entienden como mejores resultados en este caso el mejor Recall al no querer enviar pacientes enfermos a casa.
+################################################################################################################################################
+
+```{r}
+head(breast_data)
+```
+
+Preparamos los datos para hacer una regresión logistica.
+```{r}
+breast_data<-data.frame(cancer=y_train,subset(X_train,select=-c(V2)))
+breast_data
+```
+
+Establecemos los dos pasos de entrenamiento, partiendo desde todas las variables. En fit0, la sintaxis y~1 indica que y no se predice con ninguna otra variable. Este sería el último paso de nuestro aprendizaje.
+```{r}
+fit1 <- glm(cancer~V3+V4+V5+V6+V7+V8+V9+V10+V11+V12+V13+V14+V15+V16+V17+V18+V19+V20+V21+V22+V23+V24+V25+V26+V27+V28+V29+V30+V31,data=breast_data)
+```
+
+```{r}
+fit0 <- glm(cancer~1,data=breast_data)
+```
+
+```{r}
+step <-stepAIC(fit0,direction="forward",scope=list(upper=fit1,lower=fit0))
+```
+
+```{r}
+summary(step)
+```
+
+Vemos cual es el mejor resultado. Estas son las variables que mas influyen en el cancer:
+```{r}
+step$anova # resultados
+```
+
+
+```{r}
+y_pred <- as.numeric(predict(step, X_test, type="response")>0.5)
+y_pred
+```
+
+```{r}
+plot(step)
+```
+
+La matriz de confusión y las métricas de erorr se pueden calcular. Para obtener todas las que se han dado incluir la opción mode="everything" . Además se obtiene intervalo de confianza para el accuracy
+```{r}
+library(caret)
+library(ggplot2)
+library(lattice)
+library(e1071)
+```
+
+```{r}
+
+log_matrix<-confusionMatrix(factor(y_test), factor(y_pred), mode="everything")
+```
+
+################################################################################################
+Aplica la regresión de Ridge y de Lasso, da las matrices de confusión y las métricas ¿con cuál de las tres opciones obtienes mejores resultados?
+```{r}
+library(glmnet)
+```
+
+
+```{r}
+breast_data
+```
+
+
+Ajustamos un modelo de Ridge de regresión lineal, para ello en Alpha debemos fijar el valor 0y en family  'gaussian' y type.measure='mse'
+```{r}
+set.seed(999)
+x <- data.matrix(subset(breast_data, select= - cancer))
+y <- breast_data$cancer #es lo que queremos predecir
+cv.ridge <- cv.glmnet(x,y, family='gaussian', alpha=0, parallel=TRUE, standardize=TRUE, type.measure='mse')
+```
+
+```{r}
+plot(cv.ridge)
+```
+
+```{r}
+#este es el mejor valor de lambda
+cv.ridge$lambda.min
+```
+
+```{r}
+#este es el valor del error que se estima para ese valor lambda mínimo dado en MSE
+min(cv.ridge$cvm)
+```
+
+```{r}
+coef(cv.ridge, s=cv.ridge$lambda.min)
+```
+
+```{r}
+X_test
+```
+
+
+Vamos a hacer una predicción
+```{r}
+y_pred_ridge <- as.numeric(predict.glmnet(cv.ridge$glmnet.fit, newx=data.matrix(subset(X_test,select=-c(V2))), s=cv.ridge$lambda.min)>.5)
+y_pred_ridge
+```
+
+```{r}
+ridge_matrix<-confusionMatrix(factor(y_test), factor(y_pred_ridge), mode="everything")
+ridge_matrix
+```
+
+LASSO
+```{r}
+set.seed(999)
+cv.lasso <- cv.glmnet(x,y, family='gaussian', alpha=1, parallel=TRUE, standardize=TRUE, type.measure='mse')
+```
+
+```{r}
+plot(cv.lasso)
+```
+
+```{r}
+y_pred_lasso <- as.numeric(predict.glmnet(cv.lasso$glmnet.fit, newx=data.matrix(subset(X_test,select=-c(V2))), s=cv.lasso$lambda.min)>.5)
+y_pred_lasso
+```
+
+```{r}
+lasso_matrix<-confusionMatrix(factor(y_test), factor(y_pred_lasso), mode="everything")
+lasso_matrix
+```
+
+
+
+
+```{r}
+ridge_matrix
+log_matrix
+lasso_matrix
+```
+
+La mejor la obtenemos con RIDGE
+
+Si nos fijamos en el RECALL que en este caso es importante -> RIDGE es la mejor por muy poco.
