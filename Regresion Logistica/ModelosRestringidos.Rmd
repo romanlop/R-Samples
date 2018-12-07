@@ -28,7 +28,7 @@ library(glmnet)
 ```
 
 ```{r}
-set.seed(999)
+set.seed(999)#inicializar el contador de números aleatorios. 
 cv.ridge <- cv.glmnet(x, y, family='gaussian', alpha=0, parallel=TRUE, standardize=TRUE, type.measure='mse')
 ```
 
