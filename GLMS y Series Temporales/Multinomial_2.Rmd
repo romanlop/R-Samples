@@ -1,0 +1,48 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+EJEMPLO SACADO DE:
+https://www.analyticsvidhya.com/blog/2016/02/multinomial-ordinal-logistic-regression/
+
+Multinomial Logistic Regression (MLR) is a form of linear regression analysis conducted when the dependent variable is nominal with more than two levels. It is used to describe data and to explain the relationship between one dependent nominal variable and one or more continuous-level (interval or ratio scale) independent variables. You can understand nominal variable as, a variable which has no intrinsic ordering.
+
+For example: Types of Forests: ‘Evergreen Forest’, ‘Deciduous Forest’, ‘Rain Forest’. As you see, there is no intrinsic order in them, but each forest represent a unique category. In other words, multinomial regression is an extension of logistic regression, which analyzes dichotomous (binary) dependents.
+
+
+
+Case 1 (Multinomial Regression)
+The modeling of program choices made by high school students can be done using Multinomial logit. The program choices are general program, vocational program and academic program. Their choice can be modeled using their writing score and their social economic status.
+
+Based on a variety of attributes such as social status, channel type, awards and accolades received by the students, gender, economic status and how well they are able to read and write in the subjects given, the choice on the type of program can be predicted. Choice of programs with multiple levels (unordered) is the dependent variable. This case is suited for using Multinomial Logistic Regression technique.
+
+```{r}
+rm(list=ls())
+```
+
+
+```{r}
+library("foreign")
+ml <- read.dta("https://stats.idre.ucla.edu/stat/data/hsbdemo.dta")
+```
+
+```{r}
+head(ml)
+```
+
+Now we’ll execute a multinomial regression with two independent variable.
+```{r}
+library("nnet")
+test <- multinom(prog ~ ses + write, data = ml)
+```
+
+```{r}
+summary(test)
+```
+Model execution output shows some iteration history and includes the final negative log-likelihood 179.981726. This value is multiplied by two as shown in the model summary as the Residual Deviance.
+
+The summary output has a block of coefficients and another block of standard errors. Each blocks has one row of values corresponding to one model equation. In the block of coefficients, we see that the first row is being compared to prog = “general” to our baseline prog = “academic” and the second row to prog = “vocation” to our baseline prog = “academic”.
+
+
+SEGUIR VIENDO EL EJEMPLO EN LA WEB.

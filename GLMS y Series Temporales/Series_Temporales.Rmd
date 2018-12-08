@@ -1,0 +1,347 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+#Series Temporales
+Primero un ejemplo de internet que está mejor explicado: https://rpubs.com/joser/SeriesTemporalesBasicas
+
+Definición de una serie temporal
+En esta primera parte vamos a trabajar con el fichero gas6677.dat que contiene datos mensuales del consumo de gasolina en España entre enero de 1966 y agosto de 1977. Una vez situado el fichero en el directorio de trabajo lo leemos y creamos un vector llamado gas con el comando
+
+```{r}
+gas = scan('http://verso.mat.uam.es/~joser.berrendero/datos/gas6677.dat')
+plot(gas)
+gas
+```
+
+Vemos que el gráfico resultante no es el más apropiado para describir una serie temporal. Si queremos que R trate a un objeto como serie temporal, tenemos que determinar apropiadamente sus características con el comando ts. Para definir la serie correctamente escribimos:
+```{r}
+gas.ts = ts(gas, start = c(1966,1), frequency = 12)
+gas.ts
+```
+El argumento frequency se utiliza para indicar la periodicidad de la serie (en este caso mensual), mientras que el argumento start indica la fecha de la primera observación (enero de 1966).
+
+```{r}
+plot(gas.ts)
+```
+
+Vemos ahora cómo el resultado depende de las características que hemos definido para la serie. Si queremos comparar la distribución del consumo de gasolina para cada mes, un gráfico útil es
+```{r}
+boxplot(gas.ts ~ cycle(gas.ts)) #cycle gives the positions in the cycle of each observation.
+```
+
+El comando cycle determina la unidad de tiempo a la que pertenece cada observación de la serie:
+```{r}
+cycle(gas.ts)
+```
+
+Ejercicio: El fichero jj.dat contiene los beneficios trimestrales de la empresa Johnson & Johnson entre 1960 y 1980:
+```{r}
+jj = scan('http://verso.mat.uam.es/~joser.berrendero/datos/jj.dat')
+plot(jj)
+jj
+```
+
+Define la serie temporal y represéntala. ¿Cuál es el valor de la serie para el tercer trimestre de 1980? ¿Cuáles son las principales características (tendencia, estacionalidad) de esta serie?
+
+```{r}
+jj.ts = ts(gas, start = c(1960,1), frequency = 12)
+plot(jj.ts)
+```
+
+```{r}
+boxplot(jj.ts ~ cycle(jj.ts))
+```
+
+Observamos una tendencia al alta, y vmemos también que cuando mas venden es en verano. 
+
+##Descomposición de una serie
+Es frecuente analizar las series temporales desde el punto de vista de sus componentes estructurales:
+
+Serie observada = Tendencia + Efecto estacional + Residuos.
+
+En este modelo, la serie observada es el resultado de sumar una tendencia que representa el comportamiento a largo plazo de la serie, un efecto estacional que describe sus fluctuaciones periódicas y un componente residual que describe las variaciones a corto plazo, normalmente impredecibles.
+
+Con R es muy sencillo obtener una descomposición estructural de este tipo. Se usa el comando decompose:
+```{r}
+gas.ts.desc = decompose(gas.ts)
+plot(gas.ts.desc, xlab='Año')
+```
+
+Esta descomposición se basa en métodos elementales: la tendencia se calcula con una media móvil, el efecto estacional se calcula promediando los valores de cada unidad de tiempo para todos los periodos (por ejemplo, todos los meses de enero si la serie es mensual) y luego centrando el resultado. Finalmente, los residuos se obtienen restando a la serie observada las dos componentes anteriores. La descomposicion solo es totalmente adecuada si se dispone de un número completo de periodos (por ejemplo, un múltiplo de 12 si la serie es mensual).
+
+
+```{r}
+plot(gas.ts)
+```
+
+##Transformaciones básicas de una serie
+En el gráfico de gas.ts se observa que la serie no es estacionaria. La serie presenta una tendencia aparentemente lineal y una estacionalidad muy marcada (el consumo aumenta los meses de verano). Además, la amplitud de las fluctuaciones aumenta con el tiempo por lo que la variabilidad tampoco es constante. Sin embargo, muchos modelos importantes de series temporales corresponden a series estacionarias (es decir, sin tendencia ni estacionalidad y con variabilidad constante). Antes de ajustar un modelo estacionario tenemos que transformar la serie original.
+
+
+
+Estabilización de la varianza: Para estabilizar la variabilidad se suelen tomar logaritmos. Esta transformación funcionará bien cuando la variabilidad sea aproximadamente proporcional al nivel de la serie. Representamos la serie transformada mediante
+```{r}
+plot(log(gas.ts))
+```
+
+Eliminación de tendencia: Una forma sencilla de eliminar una tendencia aproximadamente lineal es diferenciar la serie, es decir, considerar la serie de diferencias entre una observación y la anterior en lugar de la serie original. Si xt es una serie contenida en x, para calcular ∇xt=xt−xt−1 con R se escribe:
+```{r}
+x = log(gas.ts)
+dif1.x = diff(x)
+plot(dif1.x)
+```
+
+Eliminación de estacionalidad: Para eliminar la estacionalidad de una serie mensual se pueden tomar diferencias estacionales de orden 12. Si xt es la serie que queremos desestacionalizar, se trata de calcular ∇12xt=xt−xt−12:
+```{r}
+dif12.dif1.x = diff(dif1.x, lag=12)
+plot(dif12.dif1.x)
+```
+
+Ejercicio: Aplica las transformaciones adecuadas a la serie de beneficios de la empresa Johnson & Johnson para obtener una serie aproximadamente estacionaria.
+
+```{r}
+plot(log(jj.ts))
+```
+
+Parece que no es necesario estabilizar la varianza. 
+
+Eliminar la tendencia
+```{r}
+x = log(jj.ts)
+dif.x = diff(x)
+plot(dif.x)
+```
+
+```{r}
+dif12.dif.x = diff(dif.x, lag=12)
+plot(dif12.dif.x)
+```
+
+
+
+####################################################################################
+#EJEMPLO MASTER
+
+La estacionalidad de las series se puede interpretar de manera aditiva ó multiplicativa, esto es:
+
+Modelo aditivo:
+Y(t)=T(t)+S(t)+ϵ(t)
+
+Modelo multiplicativo:
+Y(t)=T(t)⋅S(t)⋅ϵ(t)
+
+En ambos modelos:
+
+Y(t) es la secuencia que representa a la serie numérica.
+S(t) es la componente estacional que representa las variaciones que se presentan con la frecuencia
+T(t) es la componente de tendencia que representa la variación evolutiva de la serie respecto al tiempo
+ϵ(t) es la componente de error ó ruido blanco de la serie
+Veremos un ejemplo de una serie temporal mensual con frecuencia anual, cada 12 meses.
+
+Cargamos los datos y los representamos
+
+```{r}
+data("AirPassengers")
+AP <- AirPassengers
+frequency(AP) #returns the number of samples per unit time and deltat the time interval between observations
+AP
+```
+
+```{r}
+typeof(AP)
+```
+
+
+```{r}
+plot(AP, ylab="Passengers (1000s)", type="o", pch =20)
+```
+
+Tiene una tendencia positiva y vemos un efecto estacional. 
+
+Tomamos los datos hasta 1959 incluído como entrenamiento y los datos en 1960 como test.
+```{r}
+AP_train <- window(AP, end=c(1959,12))
+AP_test <- window(AP, start=1960)
+```
+
+
+Interpretamos los datos
+Cuando la estacionalidad parece tener más variación conforme la tendencia manifiesta su evolución, se usan modelos multiplicativos. Si no es más adecuado usar modelos aditivos. En este caso usaremos un modelo multiplicativo
+Ver: https://support.minitab.com/es-mx/minitab/18/help-and-how-to/modeling-statistics/time-series/supporting-topics/time-series-models/additive-and-multiplicative-models/ 
+
+
+Descomponemos la serie:
+VEr: http://halweb.uc3m.es/esp/Personal/personas/jmmarin/esp/EDescrip/tema7.pdf
+
+Con la función decompose se separa la serie de manera aditiva ó multiplicativa y se pueden observar los efectos:
+
+```{r}
+AP.decompM <- decompose(AP_train, type = "multiplicative")
+plot(AP.decompM)
+```
+
+```{r}
+AP.decompA <- decompose(AP_train, type = "additive")
+plot(AP.decompA)
+```
+
+Vemos las series con las componentes:
+```{r}
+AP.decompM$seasonal
+```
+
+```{r}
+AP.decompM$trend
+```
+
+```{r}
+AP.decompM$random
+```
+
+#Estacionareidad
+Tenemos un resultado de un teorema que nos dice:
+"Toda serie derivada la suficiente cantidad de veces es estacionaria"
+
+Observamos si la serie es estacionaria. Para ello hay contrastes de hipótesis, en el paquete forecast hay una función ndiff que nos dice el nÃºmero de veces que hay que derivar para conseguir que sea estacionaria. Como la serie es multiplicativa, tomamos logaritmo antes de verificar su estacionareidad:
+
+Ver: https://estrategiastrading.com/series-estacionarias/
+
+
+
+```{r}
+install.packages("forecast")
+library("forecast")
+```
+
+
+```{r}
+ndiffs(log(AP_train))
+```
+
+```{r}
+diff(AP_train) #nos da la diferencia respecto al mes anterior. 
+```
+
+```{r}
+AP_train
+```
+
+Los resultados indican que la serie es estacionaria al derivarla una vez, pintamos la serie derivada:
+```{r}
+plot(diff(log(AP_train)), ylab="Passengers (1000s)", type="o", pch =20)
+```
+
+#Ajustamos un modelo
+Vamos a ajustar una predicción sobre 1961 usando una regresión lineal para la tendencia, y haciendo agregación de los valores estacionales partiendo de un modelo multiplicativo.
+
+Modelo lineal sobre la tendencia
+```{r}
+t <- seq(1, 144-12, 1) #144 meses - 12 valores para los que no tenemos medidas
+t
+AP.decompM$trend
+```
+
+```{r}
+modelTrend <- lm(formula = AP.decompM$trend ~ t)
+summary(modelTrend)
+```
+
+Vamos a hacer una predicción con los datos de trainning
+```{r}
+predT <- predict.lm(modelTrend, newdata = data.frame(t))
+```
+
+```{r}
+plot(AP.decompM$trend[7:132] ~ t[7:132], ylab="T(t)", xlab="t",   #hay que seleccionar los datos para eliminar los NULL si no no aparece la línea roja al no coincidir los ejes.
+     type="p", pch=20, main = "Componente de tendencia: modelo lineal vs observado")
+lines(predT, col="red")
+```
+
+Creamos el dataframe de la predicción de 1960 e incluímos los valores de tendencia resultado de la regresión y los añadimos a la columna de tendencia. Estos años corresponden a los pasos 145 a 156 de la secuencia desde el origen, el valor de la regresión se calcula como:
+
+T(t)=2.58064t+88.84686
+
+```{r}
+Data1960 <- data.frame("T" = 2.58064*seq(123, 134, 1) + 88.84686, S=rep(0,12), e=rep(0,12),
+                       row.names = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+Data1960
+```
+
+Modelo sobre la componente estacional
+```{r}
+Data1960$S <- unique(AP.decompM$seasonal)
+Data1960
+```
+
+#Predicciones y error
+Las predicciones para ese año 1960 se realizan como
+
+Y(t)=T(t)⋅S(t)
+
+Observamos el valor del error hasta 1960 y debería distribuirse entorno a 1 con formato de campana de Gauss (Normal(1, ϵ))
+```{r}
+plot(density(AP.decompM$random[7:122]),
+             main="Error aproximación")
+```
+
+```{r}
+sd_error <- sd(AP.decompM$random[7:122])
+sd_error
+```
+
+Suponemos al hacer la predicción que el valor de error es 1
+```{r}
+Data1960$e <- 1.10
+Data1960
+```
+
+
+Modelo multiplicativo:
+Y(t)=T(t)⋅S(t)⋅ϵ(t)
+```{r}
+#Centro estimación
+Data1960$R <- Data1960$T * Data1960$S * Data1960$e     
+#Extremo sup. 95% confianza
+Data1960$O <- Data1960$T * Data1960$S * (Data1960$e+1.95*sd_error)  
+#Extremo inf. 95% confianza
+Data1960$P <- Data1960$T * Data1960$S * (Data1960$e-1.95*sd_error)  
+Data1960$Real <- AP_test
+Data1960
+```
+
+Representamos el valor de predicción y el real de 1960
+```{r}
+xr = c(123,134)
+plot(Data1960$Real, xlim=xr, ylab = "Passengers (100s)", xlab = "Month" , lwd=10)
+lines(Data1960$Real, x=seq(123,134,1), lwd=5)
+lines(Data1960$R, x=seq(123,134,1), col="blue")
+lines(Data1960$O, x=seq(123,134,1), col="green")
+lines(Data1960$P, x=seq(123,134,1), col="red")
+```
+
+El MAPE: Compute the mean absolute percentage error regression loss
+```{r}
+#install.packages("TSPred")
+library(TSPred)
+```
+
+```{r}
+MAPE(Data1960$Real, Data1960$R)
+```
+
+
+¿ El error se distribuye como una normal? Vemos que se distribuye ligeramente sesgada a la derecha, esto significa que estamos haciendo predicciones que se quedan cortas de valor.
+```{r}
+error <- Data1960$Real / Data1960$R
+error
+sd(error)
+```
+
+```{r}
+plot(density(error),
+             main="Error aproximación")
+```
+
+Podemos jugar con el Error -> linea 296

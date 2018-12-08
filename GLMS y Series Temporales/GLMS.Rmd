@@ -1,0 +1,350 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+#GLMs
+###Ya hemos visto los casos binomial y gaussiano, atenderemos a los casos multinomial, gamma y binomial negativa.
+
+#GlM Binomial negativa: sirve para variables de conteo
+Cargamos el dataset de cangrejos con satélites
+
+Each female horseshoe crab in the study had a male crab attached to her in her nest.
+  The study investigated factors that affect whether the female crab had any other males, called satellites, residing near her. 
+  Explanatory variables that are thought to affect this included the female crab’s color (C), spine condition (S) (condicion de la columna vertebral), weight (Wt), 
+  and carapace width (tamaño del caparazón)(W). 
+  The response outcome for each female crab is her number of satellites (Sa). There are 173 females in this study
+  
+  
+Se quiere explicar el número de satélites del cangrejo en función de los atributos descritos, como es una variable de conteo al ser un entero no negativo, el glm binomial negativo es el que mejor se adapta
+
+```{r}
+rm(list=ls())
+```
+
+```{r}
+url <- 'https://newonlinecourses.science.psu.edu/stat504/sites/onlinecourses.science.psu.edu.stat504/files/lesson07/crab/index.txt'
+df <- read.csv(url,header= F,sep = '\t')
+crabs_data <- read.table(url)
+colnames(crabs_data) <- c("Obs","C","S","W","Wt","Sa")
+head(crabs_data)
+```
+
+C -> Crabs color.
+S -> Condición de la columa.
+W -> Tamaño del caparazón.
+Wt -> Peso del cangrejo.
+Sa -> Número de Satélites. 
+
+```{r}
+#Verificamos que no hay valores nulos. 
+sapply(crabs_data, function(x) sum(is.na(x)))
+```
+
+```{r}
+crabs_data$C<-as.factor(crabs_data$C)
+crabs_data$S<-as.factor(crabs_data$S)
+str(crabs_data)
+```
+
+```{r}
+dim(crabs_data)
+```
+
+```{r}
+#Eliminamos la columna número de observación por no ser relevante.
+#crabs_data<-crabs_data[,-1]   #lo dejo comentado por si lo vuelvo a ejecutar no eliminar sucesivas columnas. 
+str(crabs_data)
+```
+
+```{r}
+crabs_data
+```
+
+Hechamos un vistazo rápido a la variable Sa
+```{r}
+mean(crabs_data$Sa)
+sd(crabs_data$Sa)
+```
+
+
+Entrenamos el modelo que supone que todos los cangrejos tienen los mismos satélites
+```{r}
+library(MASS)
+```
+
+```{r}
+#glm.nb -> Fit a Negative Binomial Generalized Linear Model
+model <- glm.nb(Sa~1, data = crabs_data)  #estamos teniendo en cuenta solo el intercept, por eso decimos que estamos suponiendo que todos tienen el mismo número y que no hay relacción con el resto de variables. 
+summary(model)
+```
+
+```{r}
+#Podemos observar que el modelo entrenado nos da siempre la media de la variabla Sa. No parece una aproximación muy buena. 
+model$fitted
+```
+
+Hacemos un modelo sobre el peso y observamos si es significativo
+```{r}
+model_2 <- glm.nb(Sa~W, data = crabs_data)
+summary(model_2)
+```
+
+Observamos valores predichos frente a valor real
+```{r}
+head(data.frame(crabs_data,pred=model_2$fitted),20)
+```
+
+Representamos el peso y la cantidad de satélites y observamos que tiene poca capacidad predictiva
+```{r}
+plot(crabs_data$W,crabs_data$Sa)
+#Parece que puede influir pero no mucho...
+```
+
+Vamos a hacer una predicción concreta.
+```{r}
+newdt <- data.frame(W=26.3)
+predict(model_2, newdt,type="response")
+```
+
+Vamos a ver cual sería el mejor modelo utilizando AIC
+```{r}
+fit1 <- glm.nb(Sa~., data=crabs_data)
+fit0 <- glm.nb(Sa~1, data=crabs_data)
+step <-stepAIC(fit0,direction="forward",scope=list(upper=fit1,lower=fit0))
+```
+
+C -> Crabs color.
+S -> Condición de la columa.
+W -> Tamaño del caparazón.
+Wt -> Peso del cangrejo.
+Sa -> Número de Satélites. 
+```{r}
+step$anova
+```
+
+```{r}
+summary(step)
+```
+
+```{r}
+mod <- glm.nb(formula = Sa ~ Wt , data = crabs_data, init.theta = 0.931, link = log)
+summary(mod)
+exp(mod$coefficients)
+```
+
+```{r}
+data.frame(crabs_data,pred=round(mod$fitted,digits = 0))
+```
+
+```{r}
+confint(mod)
+```
+
+##Vamos a probar con regresión lineal simple además para comparar. 
+
+```{r}
+plot(crabs_data$Wt,crabs_data$Sa)
+```
+
+```{r}
+mod_lin<-lm(Sa~.,data = crabs_data)
+summary(mod_lin)
+```
+
+```{r}
+mod_lin<-lm(Sa~Wt,data = crabs_data)
+summary(mod_lin)
+```
+
+```{r}
+plot(crabs_data$Wt,crabs_data$Sa)
+abline(mod_lin)
+```
+
+```{r}
+mod_lin$fitted.values
+```
+
+```{r}
+data.frame(crabs_data,pred=round(mod_lin$fitted,digits = 0))
+```
+
+
+###################################################################################################################
+###################################################################################################################
+#GLM Gamma: regresión Gamma
+La distribución Gamma sirve para hacer regresión sobre datos que toman valores positivos y están sesgados hacia la derecha. Funciona bien y puede aproximar distribuciones como la lognormal sin problema dada su flexibilidad. Un ejemplo de este tipo de datos suele ser el ROI en forma de ratio.
+
+Hay tres tipos de función link posibles para la gamma: “identity”, “log” e “inverse”.
+
+Vemos un ejemplo de regresión Gamma:
+```{r}
+install.packages("faraway")
+library(faraway)
+```
+
+```{r}
+data(wafer)
+help(wafer) #Resistencia de la oblea en un experimento con semiconductores.
+```
+
+```{r}
+head(wafer)
+```
+
+
+Vemos que los datos están sesgados hacia la derecha: https://www.google.es/search?q=valores+sesgados&source=lnms&tbm=isch&sa=X&ved=0ahUKEwi9i_T6443fAhUiSxUIHY_MAUUQ_AUIDigB&biw=1589&bih=814#imgrc=2tFq4pN8NuwUoM:
+```{r}
+#observamos que toma valores positivos la variable objetivo
+plot(density(wafer$resist))
+```
+
+```{r}
+summary(wafer)
+```
+
+Lo habitual para hacer regresión sobre una distirbución sesgada hacia la derecha es tomar logaritmos:
+```{r}
+res.lm.logY <- lm(log(resist) ~ x1 + x2 + x3 + x4, data = wafer)
+summary(res.lm.logY)
+```
+
+Probamos un modelo con glm gamma para ver que son equivalentes:
+```{r}
+res.glm.Gamma.log <- glm(formula = resist ~ x1 + x2 + x3 + x4,
+                         family  = Gamma(link = "log"),
+                         data    = wafer)
+summary(res.glm.Gamma.log)
+```
+
+Pintamos los residuos y vemos que son iguales
+```{r}
+hist(res.lm.logY$residuals)
+```
+
+```{r}
+hist(res.glm.Gamma.log$residuals)
+```
+
+Probamos la versión con link “identity”, tiene mayor AIC
+```{r}
+res.glm.Gamma.identity <- glm(formula = resist ~ x1 + x2 + x3 + x4,
+                              family  = Gamma(link = "identity"),
+                              data    = wafer)
+summary(res.glm.Gamma.identity)
+```
+
+```{r}
+hist(res.glm.Gamma.identity$residuals)
+```
+
+Probamos la versión con link “inverse”“, tiene menor AIC que las dos anteriores, parece preferible.
+```{r}
+res.glm.Gamma.inverse <- glm(formula = resist ~ x1 + x2 + x3 + x4,
+                              family  = Gamma(link = "inverse"),
+                              data    = wafer)
+summary(res.glm.Gamma.inverse)
+```
+
+```{r}
+hist(res.glm.Gamma.inverse$residuals)
+```
+
+Buscamos el modelo Gamma mejor dentro de las posibilidades usando el criterio AIC
+```{r}
+fit1 <- glm(resist~., data=wafer, family=Gamma(link = "inverse"))
+fit0 <- glm(resist~1, data=wafer, family=Gamma(link = "inverse"))
+library(MASS)
+step <-stepAIC(fit0,direction="forward",scope=list(upper=fit1,lower=fit0))
+```
+
+```{r}
+step$anova
+```
+
+```{r}
+summary(step)
+```
+
+```{r}
+step$fitted.values
+```
+```{r}
+head(data.frame(wafer,step$fitted.values),16)
+```
+
+
+########################################################################################
+#GLM Multinomial: clasificación múltiple
+El GLM Multinomial se aplica cuando tenemos que realizar una clasificación con 3 categorías o más. Cargamos el dataset iris, que tiene atributos de 3 flores y una columna con el valor de la clase.
+
+```{r}
+#install.packages(c("glmnet","ISLR"))
+library(glmnet,help=T)
+```
+
+```{r}
+help("glmnet")
+library(glmnet)
+library("foreign")
+data(iris)
+dim(iris)
+```
+
+```{r}
+iris
+```
+
+```{r}
+str(iris)
+#Vemos que hay tres tipos de especies. 
+```
+
+Como “glmnet” no acepta factores, transformamos la columna Species en categorías numéricas
+```{r}
+X <- as.matrix(subset(iris, select=- Species ))
+y <- iris$Species
+head(X)
+y
+```
+
+```{r}
+mod <- glmnet(X, y, alpha=0, family = "multinomial",type.multinomial="ungrouped")
+summary(mod)
+```
+
+```{r}
+print(mod)
+```
+
+```{r}
+plot(mod,xvar = "lambda", label = TRUE)
+```
+
+```{r}
+coef(mod,s=0)
+```
+
+```{r}
+coef(mod,s=0.1)
+```
+
+```{r}
+coef(mod,s=0.23)
+```
+Obtenemos las probabilidades de cada valor
+```{r}
+predict(mod,newx = X[1:2,],s=0,type = "response")
+```
+
+Calculamos el mejor modelo posible (parecido a stepAIC)
+```{r}
+cvfit <- cv.glmnet(X, y, alpha=0, family = "multinomial",type.multinomial="ungrouped")
+plot(cvfit)
+```
+
+```{r}
+coef(cvfit, s = "lambda.min")
+```
+
