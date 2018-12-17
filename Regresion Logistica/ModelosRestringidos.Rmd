@@ -109,7 +109,6 @@ Creamos las matrizes de predictores y variable objetivo
 ```{r}
 x <- data.matrix(subset(SAheart  , select= - chd))
 y <- as.double(as.matrix(SAheart$chd  ))
-str(X)
 ```
 
 Vamos a dividir en dos conjuntos, uno de entrenamiento y otro de test, para evlauar la capacidad predictiva de cada modelo:
